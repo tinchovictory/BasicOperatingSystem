@@ -11,6 +11,7 @@ int write(int fd, const void *buf, int nbytes){
 		int i;
 		for (i=0; i<nbytes; i++){
 			video[cursor]=((char *) buf)[i];
+			cursor+=2;
 		}
 	}
 	return 0;

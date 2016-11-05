@@ -1,6 +1,8 @@
 #include <interruptions.h>
 
 void sti();
+unsigned char getKeyboard();
+void printCharacter();
 void irq0Handler();
 void irq1Handler();
 void setPicMaster(uint16_t);
@@ -33,15 +35,16 @@ void tickHandler() {
 }
 
 void keyBoardDriver(){
-	video[cursor]='h';
+	video[cursor]=getKeyboard();
 	cursor+=2;
+	sti();
 }
 
 
 
 typedef void (*handler_t)(void);
 
-handler_t handlers[] = {tickHandler,keyBoardDriver};
+handler_t handlers[] = {tickHandler,printCharacter};
 
 void irqDispatcher(int irq) {
 	handlers[irq]();
