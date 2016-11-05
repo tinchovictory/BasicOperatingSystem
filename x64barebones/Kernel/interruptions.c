@@ -37,7 +37,6 @@ void tickHandler() {
 void keyBoardDriver(){
 	video[cursor]=getKeyboard();
 	cursor+=2;
-	sti();
 }
 
 
@@ -67,7 +66,7 @@ void iSetHandler(int index, uint64_t handler) {
 void initializeInterruptions(){
 	iSetHandler(0x20, (uint64_t) irq0Handler);
 	iSetHandler(0x21, (uint64_t) irq1Handler);
-	setPicMaster(0x7C);
+	setPicMaster(0xFC); // activo las irq0 y irq1 en el pic
 	
 	sti();
 }
