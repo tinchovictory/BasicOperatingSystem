@@ -5,6 +5,8 @@
 #include <naiveConsole.h>
 #include <interruptions.h>
 
+#include <videoDriver.h>
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -83,6 +85,7 @@ void * initializeKernelBinary()
 
 int main()
 {	
+	clearScreen();
 	initializeInterruptions();
 	((EntryPoint)sampleCodeModuleAddress)();
 	while(1);

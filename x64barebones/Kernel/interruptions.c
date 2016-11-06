@@ -27,7 +27,7 @@ typedef struct {
 
 static IDTEntry_t* IDT = (IDTEntry_t*) 0x0;
 static char *video = (char *) 0xB8000;
-static int i=0;
+//static int i=0;
 static int cursor=80;
 
 void tickHandler() {
