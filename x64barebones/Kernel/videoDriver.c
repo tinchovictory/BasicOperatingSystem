@@ -43,10 +43,8 @@ void clearScreen(){
 }
 
 void moveScreenUp(){
-	for(int i = 0; i < WINDOW_HEIGHT-1; i++){
-		for(int j = 0; j < WINDOW_WIDTH*2; j++){
-			*(screen + i + j) = *(screen + i + j + WINDOW_WIDTH*2);
-		}
+	for(int i = 0; i< WINDOW_WIDTH*2 * (WINDOW_HEIGHT-1); i++){
+		screen[i] = screen[i+WINDOW_WIDTH*2];
 	}
 	for(int i = 0; i < WINDOW_WIDTH*2; i+=2){
 		*(screen + END_OF_SCREEN - WINDOW_WIDTH*2 + i) = ' ';
