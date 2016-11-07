@@ -1,4 +1,5 @@
 #include <interruptions.h>
+#include <keyBoardDriver.h>
 
 void sti();
 unsigned char getKeyboard();
@@ -43,7 +44,7 @@ void keyBoardDriver(){
 
 typedef void (*handler_t)(void);
 
-handler_t handlers[] = {tickHandler,printCharacter};
+handler_t handlers[] = {tickHandler,keyBoardHandler};
 
 void irqDispatcher(int irq) {
 	handlers[irq]();

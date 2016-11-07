@@ -4,30 +4,6 @@
 #define DEFAULT_COLOR 0x0F
 #define END_OF_SCREEN WINDOW_WIDTH*2 * WINDOW_HEIGHT
 
-/*static char * video = (char *) 0xB8000;
-static int cursor=0;
-
-
-int write(int fd, const void *buf, int nbytes){
-	if( fd == 1){
-		int i;
-		for (i=0; i<nbytes; i++){
-			video[cursor]=((char *) buf)[i];
-			cursor+=2;
-		}
-	}
-	return 0;
-}
-
-void clearScreen(){
-	int i,j;
-	for (i=0; i<ROWS ; i++ ){
-		for (j=0; j<COLS ; j+=2){
-			video[i+j*80*2]=' ';
-		}
-	}
-}*/
-
 static char * screen = (char *)0xB8000;
 static char * currentPosition = (char*)0xB8000;
 
