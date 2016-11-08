@@ -51,7 +51,7 @@ void irqDispatcher(int irq) {
 }
 
 void test(){
-	printCharacters("Hola",4);
+	printCharacters("hola",4);
 }
 
 
