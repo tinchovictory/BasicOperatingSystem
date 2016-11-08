@@ -5,6 +5,8 @@ void clearScreen();
 
 void print( const char * string );
 
+void printCharacters(const char * character, int length);
+
 void newLine();
 
 void backSpace();

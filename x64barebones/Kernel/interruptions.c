@@ -50,6 +50,10 @@ void irqDispatcher(int irq) {
 	handlers[irq]();
 }
 
+void test(){
+	printCharacters("Hola",4);
+}
+
 
 void iSetHandler(int index, uint64_t handler) {
 	IDT[index].offset_l = (uint16_t) handler & 0xFFFF;
@@ -67,6 +71,9 @@ void iSetHandler(int index, uint64_t handler) {
 void initializeInterruptions(){
 	iSetHandler(0x20, (uint64_t) irq0Handler);
 	iSetHandler(0x21, (uint64_t) irq1Handler);
+
+	iSetHandler(0x80, (uint64_t) test);//software interruptions, systemcall
+
 	setPicMaster(0xFC); // activo las irq0 y irq1 en el pic
 	
 	sti();

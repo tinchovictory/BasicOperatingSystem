@@ -1,5 +1,3 @@
-#include "videoDriver.h"
-
 #include "keyBoardDriver.h"
 #define BUFFER_SIZE 100
 #define L_SHIFT_PRESSED 0x2A
@@ -70,6 +68,10 @@ void keyBoardHandler(){
 
 unsigned char getKey(){
 	unsigned char character = 0;
+
+	if(*current == 0){//si tengo el buffer vacio no avanzo el puntero
+		return 0;
+	}
 
 	character = *current;
 	*(current++) = 0;
