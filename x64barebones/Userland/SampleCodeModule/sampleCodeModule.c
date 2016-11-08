@@ -1,16 +1,24 @@
-#include <stdint.h>
+#include <systemCalls.h>
+
 /* sampleCodeModule.c */
 
 static int var1 = 0;
 static int var2 = 0;
 
-void systemCall(uint64_t systemCallNumber,uint64_t * buf);
-
 int main() {
 	
 	char c[5] = {'h','o','l','a'}; 
 
-	systemCall(1,c);
+	write(1,c,4);
+	//clearScreen();
+	c[0] = '1';
+	write(1,"\n",1);
+	write(1,c,4);
+
+	/*for(int i=0;i<100;i++){
+		unsigned char ch =read(1,0,0);
+		write(1, &ch, 1);
+	}*/
 
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)

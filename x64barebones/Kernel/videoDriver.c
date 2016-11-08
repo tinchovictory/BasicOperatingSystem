@@ -45,8 +45,17 @@ void print(const char * string){
 
 void printCharacters(const char * character, int length){
 	while(length != 0){
-		*(currentPosition++) = *(character++);
-		*(currentPosition++) = DEFAULT_COLOR;
+		//analizo caracteres especiales
+		if(*character == '\n'){
+			character++;
+			newLine();
+		}else if(*character == '\b'){
+			character++;
+			backSpace();
+		}else{
+			*(currentPosition++) = *(character++);
+			*(currentPosition++) = DEFAULT_COLOR;
+		}
 		checkEndOfScreen();
 		length--;
 	}
