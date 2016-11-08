@@ -3,6 +3,6 @@
 
 #include <stdint.h>
 
-uint64_t systemCall(uint64_t systemCallNumber, uint64_t fileDescriptor, uint64_t * buf, uint64_t nBytes); // asm function
+uint64_t systemCall(uint64_t systemCallNumber, uint64_t fileDescriptor, void * buf, uint64_t nBytes); // asm function
 
 #endif

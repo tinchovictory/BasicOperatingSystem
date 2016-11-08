@@ -42,7 +42,7 @@ void print(const char * string){
 		checkEndOfScreen();
 	}
 }
-
+/*
 void printCharacters(const char * character, int length){
 	while(length != 0){
 		//analizo caracteres especiales
@@ -52,6 +52,9 @@ void printCharacters(const char * character, int length){
 		}else if(*character == '\b'){
 			character++;
 			backSpace();
+		}else if(*character == '\t'){
+			character++;
+			printTab();
 		}else{
 			*(currentPosition++) = *(character++);
 			*(currentPosition++) = DEFAULT_COLOR;
@@ -59,6 +62,24 @@ void printCharacters(const char * character, int length){
 		checkEndOfScreen();
 		length--;
 	}
+}
+*/
+void printCharacters(const char character){
+	//analizo caracteres especiales
+	if(character == '\n'){
+		//character++;
+		newLine();
+	}else if(character == '\b'){
+		//character++;
+		backSpace();
+	}else if(character == '\t'){
+		//character++;
+		printTab();
+	}else{
+		*(currentPosition++) = character;
+		*(currentPosition++) = DEFAULT_COLOR;
+	}
+	checkEndOfScreen();
 }
 
 void newLine(){
@@ -74,6 +95,9 @@ void backSpace(){
 	*currentPosition = ' ';
 }
 
+void printTab(){
+	currentPosition += 8; 
+}
 
 /*
 void clearScreenWithColor(int color){

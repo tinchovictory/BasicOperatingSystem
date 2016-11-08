@@ -11,26 +11,41 @@ uint64_t clearScreenSys(){
 	clearScreen();
 	return 0;
 }
+uint64_t write(uint64_t fileDescriptor, char * buf, uint64_t nBytes);
 
-uint64_t read(uint64_t fileDescriptor, uint64_t * buf, uint64_t nBytes){
-	return getKey();
+uint64_t read(uint64_t fileDescriptor, char * buf, uint64_t nBytes){
+
+	if(fileDescriptor == 1){
+		int i,cont = 1;
+		for (i = 0; i < nBytes && cont; i++){
+			*(buf + i) = getKey();
+			if(*(buf + i) == 0){
+				cont = 0;
+			}
+		}
+		return i;
+	}
+	return -1;
 }
 
-uint64_t write(uint64_t fileDescriptor, uint64_t * buf, uint64_t nBytes){
-	// int i;
-	// for(i=0;i<nBytes;i++){
-	// 	printCharacters(buf+i,1);
-	// }
-	printCharacters(buf,nBytes);//si le paso un nBytes mayor va a fallar. Lo de arriba no anda
-	return nBytes;
+uint64_t write(uint64_t fileDescriptor, char * buf, uint64_t nBytes){
+
+	if(fileDescriptor == 1){
+		int i;
+		for(i = 0; i < nBytes && buf[i] != 0; i++){
+			printCharacters(buf[i]);
+		}
+		return i;
+	}
+	return -1;
 }
 
 
-uint64_t systemCall(uint64_t systemCallNumber, uint64_t fileDescriptor, uint64_t * buf, uint64_t nBytes){
+uint64_t systemCall(uint64_t systemCallNumber, uint64_t fileDescriptor, void * buf, uint64_t nBytes){
 	if(systemCallNumber == SYS_CALL_READ){
-		return read(fileDescriptor, buf, nBytes);
+		return read(fileDescriptor, (char *) buf, nBytes);
 	}else if(systemCallNumber == SYS_CALL_WRITE){
-		return write(fileDescriptor, buf, nBytes);
+		return write(fileDescriptor, (char *) buf, nBytes);
 	}else if(systemCallNumber == SYS_CALL_CLEAR_SCREEN){
 		return clearScreenSys();
 	}
