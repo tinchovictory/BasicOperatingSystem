@@ -1,8 +1,8 @@
-GLOBAL testInterruptions
+GLOBAL systemCall
 
 section .text
 
-testInterruptions:
+systemCall:
 	push rbp
 	mov rbp, rsp
 

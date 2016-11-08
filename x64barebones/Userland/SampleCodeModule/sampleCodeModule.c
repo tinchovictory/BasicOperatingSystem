@@ -3,11 +3,11 @@
 static int var1 = 0;
 static int var2 = 0;
 
-void testInterruptions();
+void systemCall();
 
 int main() {
 	
-	testInterruptions();
+	systemCall();
 
 	//Test if BSS is properly set up
 	if (var1 == 0 && var2 == 0)

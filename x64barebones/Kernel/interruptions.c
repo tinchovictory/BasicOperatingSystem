@@ -1,11 +1,13 @@
 #include <interruptions.h>
 #include <keyBoardDriver.h>
+#include <systemCalls.h>
 
 void sti();
 unsigned char getKeyboard();
 void printCharacter();
 void irq0Handler();
 void irq1Handler();
+void sysCallHandler();
 void setPicMaster(uint16_t);
 
 #pragma pack(push)
@@ -24,23 +26,11 @@ typedef struct {
 
 #pragma pack(pop)
 
-
-
-static IDTEntry_t* IDT = (IDTEntry_t*) 0x0;
-static char *video = (char *) 0xB8000;
-//static int i=0;
-static int cursor=80;
+static IDTEntry_t* IDT = (IDTEntry_t*) 0x0; // pongo la idt en la posicion 0 de memeoria
 
 void tickHandler() {
 	//video[i++] = i;	
 }
-
-void keyBoardDriver(){
-	video[cursor]=getKeyboard();
-	cursor+=2;
-}
-
-
 
 typedef void (*handler_t)(void);
 
@@ -49,11 +39,6 @@ handler_t handlers[] = {tickHandler,keyBoardHandler};
 void irqDispatcher(int irq) {
 	handlers[irq]();
 }
-
-void test(){
-	printCharacters("hola",4);
-}
-
 
 void iSetHandler(int index, uint64_t handler) {
 	IDT[index].offset_l = (uint16_t) handler & 0xFFFF;
@@ -72,7 +57,7 @@ void initializeInterruptions(){
 	iSetHandler(0x20, (uint64_t) irq0Handler);
 	iSetHandler(0x21, (uint64_t) irq1Handler);
 
-	iSetHandler(0x80, (uint64_t) test);//software interruptions, systemcall
+	iSetHandler(0x80, (uint64_t) sysCallHandler);//software interruptions, systemcall
 
 	setPicMaster(0xFC); // activo las irq0 y irq1 en el pic
 	
