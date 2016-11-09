@@ -4,6 +4,8 @@
 
 static int var1 = 0;
 static int var2 = 0;
+int printf(const char* format);
+int getchar();
 
 int main() {
 	
@@ -15,13 +17,24 @@ int main() {
 	write(1,"\n",1);
 	write(1,c,10);
 */
-	read(1,c,1);
+	char buffer[100];
+	char character;
+	int i;
+	//while(character= getchar() != '1'){
+	//	buffer[i++]=character;
+	//}
+	buffer[0]=getchar();
+	buffer[1]=0;
+	printf(buffer);
+	printf("HOLA");
+
+	/*read(1,c,1);
 	write(1,c,10);
 	while(*c != '1'){
 		read(1,c,1);
 		write(1,c,10);
 	}
-
+*/
 	/*for(int i=0;i<100;i++){
 		unsigned char ch =read(1,0,0);
 		write(1, &ch, 1);
