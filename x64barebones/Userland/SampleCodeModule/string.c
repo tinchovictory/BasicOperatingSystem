@@ -1,3 +1,14 @@
+#include <string.h>
+
+int strlen(char* str){
+	int length=0;
+	while(*str){
+		length++;
+		str++;
+	}
+	return length;
+}
+
 
 // invierte el orden de los caracteres de la palabra
 char* strrev(char* str){
@@ -49,6 +60,14 @@ char* strcat(char* str1, char* str2){
 	return str1;
 }
 
+int strcmp(const char* str1, const char* str2){
+	while(*str1 == *str2){
+		str1++;
+		str2++;
+	}
+	return *str1-*str2;
+}
+
 
 // devuelve 1 si el string2 esta contenido en el string1 y 0 sino
 int strstr(char* str1, char* str2){
@@ -74,13 +93,4 @@ int strstr(char* str1, char* str2){
 		str1++;
 	}
 	return 0;
-}
-
-int strlen(char* str){
-	int length
-	while(*str){
-		length++;
-		str++;
-	}
-	return length;
 }

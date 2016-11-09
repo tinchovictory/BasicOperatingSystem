@@ -20,5 +20,8 @@ int strstr(char* str1, char* str2);
 /* Computes the length of the string str up to but not including the terminating null character */
 int strlen(char* str);
 
+/* Returns positive if string str1 is bigger than str2, 0 if they are equals and negative otherwise */
+int strcmp(const char* str1, const char* str2);
+
 
 #endif

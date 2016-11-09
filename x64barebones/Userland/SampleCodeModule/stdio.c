@@ -1,9 +1,7 @@
 #include <systemCalls.h>
 #include <stdarg.h>
 #include <stdio.h>
-
-
-int strlen(const char* str);
+#include <string.h>
 
 
 int printf(const char* format,...){
@@ -56,13 +54,4 @@ int getchar(){
 
 int putchar(char c){
 	return write(1,&c,1);
-}
-
-int strlen(const char* str){
-	int count=0; 
-	while(*str){
-		count++;
-		str++;
-	}
-	return count;
 }

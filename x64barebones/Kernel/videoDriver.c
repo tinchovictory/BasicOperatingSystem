@@ -64,23 +64,7 @@ void printCharacters(const char * character, int length){
 	}
 }
 */
-void printCharacters(const char character){
-	//analizo caracteres especiales
-	if(character == '\n'){
-		//character++;
-		newLine();
-	}else if(character == '\b'){
-		//character++;
-		backSpace();
-	}else if(character == '\t'){
-		//character++;
-		printTab();
-	}else{
-		*(currentPosition++) = character;
-		*(currentPosition++) = DEFAULT_COLOR;
-	}
-	checkEndOfScreen();
-}
+
 
 void newLine(){
 	currentPosition +=  (screen - currentPosition) % (WINDOW_WIDTH*2) + WINDOW_WIDTH*2;
@@ -97,6 +81,24 @@ void backSpace(){
 
 void printTab(){
 	currentPosition += 8; 
+}
+
+void printCharacters(const char character){
+	//analizo caracteres especiales
+	if(character == '\n'){
+		//character++;
+		newLine();
+	}else if(character == '\b'){
+		//character++;
+		backSpace();
+	}else if(character == '\t'){
+		//character++;
+		printTab();
+	}else{
+		*(currentPosition++) = character;
+		*(currentPosition++) = DEFAULT_COLOR;
+	}
+	checkEndOfScreen();
 }
 
 /*
