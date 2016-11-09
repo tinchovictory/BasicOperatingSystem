@@ -8,7 +8,7 @@
 #define CAPS_LOCK_RELEASED 0xBA
 
 unsigned int checkKeyboard();
-unsigned char getKeyboard();
+int getKeyboard();
 
 static char lKeyboard[128] = {0,'`','1','2','3','4','5','6','7','8','9','0','-','=','\b'/*borrar*/,
 						'\t'/*tab*/,'q','w','e','r','t','y','u','i','o','p','[',']','\n',
@@ -21,16 +21,16 @@ static char uKeyboard[128] = {0,'~','!','@','#','$','%','^','&','*','(',')','_',
 						0/*MAYUS*/,'A','S','D','F','G','H','J','K','L',':','"','|',
 						0/*shift*/,0,'Z','X','C','V','B','N','M','<','>','?',0/*shift*/,0,0,' '};
 
-static unsigned char buffer[BUFFER_SIZE] = {0};
-static unsigned char * current = buffer;
-static unsigned char * last = buffer;
+static int buffer[BUFFER_SIZE] = {0};
+static int * current = buffer;
+static int * last = buffer;
 
 int uppercase = 0;
 
 void keyBoardHandler(){
 	if(checkKeyboard()){
-		unsigned char character;
-		unsigned char key = getKeyboard();
+		int character;
+		int key = getKeyboard();
 
 		//veo si aprete para usar mayusculas
 		if(key == L_SHIFT_PRESSED || key == R_SHIFT_PRESSED){
@@ -66,8 +66,8 @@ void keyBoardHandler(){
 	}
 }
 
-unsigned char getKey(){
-	unsigned char character = 0;
+int getKey(){
+	int character = 0;
 
 	if(*current == 0){//si tengo el buffer vacio no avanzo el puntero
 		return 0;

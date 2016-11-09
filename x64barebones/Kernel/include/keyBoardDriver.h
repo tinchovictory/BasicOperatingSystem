@@ -3,6 +3,6 @@
 
 void keyBoardHandler();
 
-unsigned char getKey();
+int getKey();
 
 #endif

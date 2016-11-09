@@ -16,12 +16,14 @@ uint64_t write(uint64_t fileDescriptor, char * buf, uint64_t nBytes);
 uint64_t read(uint64_t fileDescriptor, char * buf, uint64_t nBytes){
 
 	if(fileDescriptor == 1){
-		int cont = 1,readBytes=0;
+		int cont = 1, readBytes=0;
 		for (int i = 0; i < nBytes && cont; i++){
-			*(buf + i) = getKey();
+			*(buf + i) = (char) getKey();
 			if(*(buf + i) == 0){
+				//write(1,"a",1);
 				cont = 0;
 			}else{
+				//write(1,"b",1);
 				readBytes++;
 			}
 		}

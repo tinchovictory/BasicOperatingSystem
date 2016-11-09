@@ -26,7 +26,12 @@ sysCallHandler:
 	
 	call systemCall
 	
+	mov [return], rax ; guardo el valor de retorno
+
 	popaq
+
+	mov rax, [return]
+
 	iretq
 
 
@@ -47,3 +52,6 @@ setPicMaster:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+section .bss
+	return resq 1
