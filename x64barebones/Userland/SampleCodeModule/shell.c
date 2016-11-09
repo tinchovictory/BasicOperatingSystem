@@ -28,7 +28,14 @@ void shell(){
 		char c;
 		puts("> ");
 		while ((c=getchar())!= '\n'){
-			buffer[i++]=c;
+			if(c != '\b'){
+				buffer[i++]=c;
+			}else{
+				if(i==0){
+					continue;
+				}
+				i--;
+			}
 			putchar(c);
 		}
 		putchar(c);
