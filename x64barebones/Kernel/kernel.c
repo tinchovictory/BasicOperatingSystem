@@ -89,6 +89,5 @@ int main()
 	clearScreen();
 	initializeInterruptions();
 	((EntryPoint)sampleCodeModuleAddress)();
-	while(1);
 	return 0;
 }

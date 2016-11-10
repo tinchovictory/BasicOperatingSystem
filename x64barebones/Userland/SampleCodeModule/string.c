@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdio.h>
 
 int strlen(char* str){
 	int length=0;
@@ -61,11 +62,11 @@ char* strcat(char* str1, char* str2){
 }
 
 int strcmp(const char* str1, const char* str2){
-	while(*str1 == *str2 && *str1 != 0 && str2 != 0){
+	while((*str1 == *str2) && *str1 != 0 && *str2 != 0){
 		str1++;
 		str2++;
 	}
-	return *str1-*str2;
+	return *str1 - *str2;
 }
 
 

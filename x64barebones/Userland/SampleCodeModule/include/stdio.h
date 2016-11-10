@@ -7,7 +7,7 @@ int putchar(char c);
 
 int getchar();
 
-int printf(const char* format, ...);
+void printf(const char* format, ...);
 
 int puts(char * str);
 
