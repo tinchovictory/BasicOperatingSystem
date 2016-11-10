@@ -27,7 +27,9 @@ void putNum(int num){
 }
 
 int puts(char * str){
-	return write(1,str,strlen(str));
+	int ans =write(1,str,strlen(str));
+	ans+=putchar('\n');
+	return ans;
 }
 
 int getchar(){

@@ -14,19 +14,17 @@ int startsWith(const char * str1, const char * str2){
 
 void processComand(char * buffer){
 	if (!strcmp(buffer,"help")){
-		puts("  echo : print on screen\n");
-		puts("  hola : saludo de la consola\n");
+		puts("  echo : print on screen");
+		puts("  hola : saludo de la consola");
 	}
 	else if(startsWith("echo",buffer)){
-		puts("  ");
-		puts(buffer+4);
-		putchar('\n');
+		printf("  %s\n",buffer+4);
 	}
 	else if(!strcmp(buffer,"hola")){
-		puts("  Hola! Mi nombre es NetSky\n");
+		puts("  Hola! Mi nombre es NetSky");
 	}
 	else{
-		printf("  Command not found - help for instructions\n");
+		puts("  Command not found - help for instructions");
 	}
 }
 
@@ -37,23 +35,19 @@ void shell(){
 	int i=0;
 	while(1){
 		char c;
-		puts("$> ");
+		printf("$> ");
 		while ((c=getchar())!= '\n'){
 			if(c != '\b'){
 				buffer[i++]=c;
-			}else{
-				if(i==0){
-					continue;
-				}
+				putchar(c);
+			}else if (i>0){
 				i--;
-			}
-			putchar(c);
+				putchar(c);
+			}	
 		}
 		putchar(c);
 		buffer[i]=0;
-		c='0';
 		processComand(buffer);
-		//putchar(c);
 		i=0;
 	}
 
