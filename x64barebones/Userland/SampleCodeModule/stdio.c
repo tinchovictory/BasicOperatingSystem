@@ -26,9 +26,13 @@ void putNum(int num){
 
 }
 
+int printString(char * str){
+	return write(1,str,strlen(str));
+}
+
 int puts(char * str){
-	int ans =write(1,str,strlen(str));
-	ans+=putchar('\n');
+	int ans = printString(str);
+	ans += putchar('\n');
 	return ans;
 }
 
@@ -49,15 +53,14 @@ void printf(const char* format,...){
 	int i;
 	for(i=0;format[i]!=0;i++){
 		while(format[i]!=0 && format[i]!='%'){
-			putchar(format[i]);
-			i++;
+			putchar(format[i++]);
 		}
 		if (format[i]==0){
 			break;
 		}else if(format[i]=='%'){
 			i++;
 			if(format[i]=='s'){
-				puts(va_arg(parameters, char *));
+				printString(va_arg(parameters, char *));
 			}else if(format[i]=='c') {
 				putchar(va_arg(parameters, int));
 			}else if (format[i]=='d'){

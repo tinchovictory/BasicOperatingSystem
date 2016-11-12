@@ -14,11 +14,11 @@ int startsWith(const char * str1, const char * str2){
 
 void processComand(char * buffer){
 	if (!strcmp(buffer,"help")){
-		puts("  echo : print on screen");
-		puts("  hola : saludo de la consola");
+		printf("  echo : print on screen\n");
+		printf("  hola : saludo de la consola\n");
 	}
-	else if(startsWith("echo",buffer)){
-		printf("  %s\n",buffer+4);
+	else if(startsWith("echo ",buffer)){
+		puts(buffer+5);
 	}
 	else if(!strcmp(buffer,"hola")){
 		puts("  Hola! Mi nombre es NetSky");
