@@ -14,5 +14,6 @@ void *calloc(size_t nitems, size_t size);
 
 void free(void *ptr);
 
+int abs(int x);
 
 #endif

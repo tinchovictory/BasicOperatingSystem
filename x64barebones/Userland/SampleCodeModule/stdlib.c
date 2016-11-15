@@ -27,3 +27,10 @@ void *calloc(size_t nitems, size_t size){
 void free(void *ptr){
 	memoryManagement(MEMORY_FREE_CODE,NULL);
 }
+
+int abs(int x){
+	if(x<0){
+		x*=-1;
+	}
+	return x;
+}

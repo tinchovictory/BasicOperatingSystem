@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "myGame.h"
 
 int startsWith(const char * str1, const char * str2){
 	while(*str1){
@@ -26,12 +27,13 @@ void processComand(char * buffer){
 	}
 	else{
 		puts("  Command not found - help for instructions");
+		game2048();
 	}
 }
 
 
 void shell(){
-	
+
 	char buffer[100];
 	int i=0;
 	while(1){
