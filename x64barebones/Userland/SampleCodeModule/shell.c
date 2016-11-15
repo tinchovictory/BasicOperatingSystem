@@ -18,16 +18,18 @@ void processComand(char * buffer){
 	if (!strcmp(buffer,"help")){
 		printf("  echo : print on screen\n");
 		printf("  hola : saludo de la consola\n");
+		printf("  2048game : Juego 2048\n");
 	}
 	else if(startsWith("echo ",buffer)){
 		puts(buffer+5);
 	}
 	else if(!strcmp(buffer,"hola")){
 		puts("  Hola! Mi nombre es NetSky");
+	}else if(!strcmp(buffer,"2048game")){
+		game2048();
 	}
 	else{
 		puts("  Command not found - help for instructions");
-		game2048();
 	}
 }
 
