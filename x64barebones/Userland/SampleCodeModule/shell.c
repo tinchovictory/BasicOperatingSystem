@@ -3,16 +3,7 @@
 #include <stdlib.h>
 #include "myGame.h"
 
-int startsWith(const char * str1, const char * str2){
-	while(*str1){
-		if(*str1!=*str2){
-			return 0;
-		}
-		str1++;
-		str2++;
-	}
-	return 1;
-}
+void clearScreen();
 
 void processComand(char * buffer){
 	if (!strcmp(buffer,"help")){
@@ -27,6 +18,9 @@ void processComand(char * buffer){
 		puts("  Hola! Mi nombre es NetSky");
 	}else if(!strcmp(buffer,"2048game")){
 		game2048();
+	}
+	else if(!strcmp("clear",buffer)){
+		clearScreen();
 	}
 	else{
 		puts("  Command not found - help for instructions");

@@ -26,6 +26,14 @@ void putNum(int num){
 
 }
 
+int isDigit(char c){
+	if (c>='0' && c<='9'){
+		return 1;
+	}else {
+		return 0;
+	}
+}
+
 int printString(char * str){
 	return write(1,str,strlen(str));
 }
@@ -65,6 +73,9 @@ void printf(const char* format,...){
 				putchar(va_arg(parameters, int));
 			}else if (format[i]=='d'){
 				putNum(va_arg(parameters,int));
+			}else{
+				putchar('%');
+				putchar(format[i]);
 			}
 		}
 	}
@@ -72,4 +83,15 @@ void printf(const char* format,...){
 
 
 	return;
+}
+
+int startsWith(const char * str1, const char * str2){
+	while(*str1){
+		if(*str1!=*str2){
+			return 0;
+		}
+		str1++;
+		str2++;
+	}
+	return 1;
 }
