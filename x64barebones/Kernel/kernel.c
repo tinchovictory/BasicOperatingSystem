@@ -8,6 +8,10 @@
 #include <videoDriver.h>
 #include <keyBoardDriver.h>
 
+
+#include <pci.h>
+#include <RTL8139.h>
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -88,6 +92,11 @@ int main()
 {	
 	clearScreen();
 	initializeInterruptions();
-	((EntryPoint)sampleCodeModuleAddress)();
+	
+	//searchRTL();
+	activeDMA();
+	initRTL();
+
+	//((EntryPoint)sampleCodeModuleAddress)();
 	return 0;
 }

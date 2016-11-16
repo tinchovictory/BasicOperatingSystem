@@ -1,7 +1,9 @@
 GLOBAL sti
 GLOBAL setPicMaster
+GLOBAL setPicSlave
 GLOBAL irq0Handler
 GLOBAL irq1Handler
+GLOBAL irq11Handler
 GLOBAL sysCallHandler
 
 EXTERN irqDispatcher
@@ -15,6 +17,8 @@ irq0Handler:
 	irqHandler 0
 irq1Handler:
 	irqHandler 1
+irq11Handler:
+	irqHandler 11
 	
 
 
@@ -52,6 +56,19 @@ setPicMaster:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+
+setPicSlave:
+	push rbp
+	mov rbp, rsp
+	
+	mov rax, rdi
+	out 0A1h, al
+	
+	mov rsp, rbp
+	pop rbp
+	ret
+
 
 section .bss
 	return resq 1

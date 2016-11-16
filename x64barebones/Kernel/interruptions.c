@@ -2,13 +2,17 @@
 #include <keyBoardDriver.h>
 #include <systemCalls.h>
 
+#include <naiveConsole.h>
+
 void sti();
 unsigned char getKeyboard();
 void printCharacter();
 void irq0Handler();
 void irq1Handler();
+void irq11Handler();
 void sysCallHandler();
 void setPicMaster(uint16_t);
+void setPicSlave(uint16_t);
 
 #pragma pack(push)
 #pragma pack(1)
@@ -32,9 +36,13 @@ void tickHandler() {
 	//video[i++] = i;	
 }
 
+void test(){
+	ncPrint("hola");
+}
+
 typedef void (*handler_t)(void);
 
-handler_t handlers[] = {tickHandler,keyBoardHandler};
+handler_t handlers[] = {tickHandler,keyBoardHandler,0,0,0,0,0,0,0,0,0,test};
 
 void irqDispatcher(int irq) {
 	handlers[irq]();
@@ -56,10 +64,12 @@ void iSetHandler(int index, uint64_t handler) {
 void initializeInterruptions(){
 	iSetHandler(0x20, (uint64_t) irq0Handler);
 	iSetHandler(0x21, (uint64_t) irq1Handler);
+	iSetHandler(0x2B, (uint64_t) irq11Handler);
 
 	iSetHandler(0x80, (uint64_t) sysCallHandler);//software interruptions, systemcall
 
-	setPicMaster(0xFC); // activo las irq0 y irq1 en el pic
+	setPicMaster(0xF8); // activo las irq0 y irq1 en el pic
+	setPicSlave(0x0);
 	
 	sti();
 }
