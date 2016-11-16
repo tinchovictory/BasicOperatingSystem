@@ -23,5 +23,6 @@ int strlen(char* str);
 /* Returns positive if string str1 is bigger than str2, 0 if they are equals and negative otherwise */
 int strcmp(const char* str1, const char* str2);
 
-
+/* Returns the number that the string number represents */
+int stringToNum(char* number);
 #endif

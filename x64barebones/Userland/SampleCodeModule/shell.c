@@ -49,5 +49,6 @@ void shell(){
 		processComand(buffer);
 		i=0;
 	}
+	
 
 }

@@ -95,3 +95,14 @@ int strstr(char* str1, char* str2){
 	}
 	return 0;
 }
+
+// devuelve el numero que representa el string number
+int stringToNum(char* number){
+	int ret = 0;
+	int i = 0;
+	for(i; *number;i++){
+		ret = ret*10 + *number -'0';
+		number++;
+	}
+	return ret;
+}

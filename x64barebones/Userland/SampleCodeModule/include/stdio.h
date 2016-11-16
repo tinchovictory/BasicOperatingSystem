@@ -13,4 +13,12 @@ int puts(char * str);
 
 void putNum(int num);
 
+int ungetc(int c);
+
+void scanf(const char *format, ...);
+
+void scanfbuffer(const char *format, ...);
+
+void getline(char* buffer);
+
 #endif
