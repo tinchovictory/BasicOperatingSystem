@@ -13,6 +13,8 @@ void irq11Handler();
 void sysCallHandler();
 void setPicMaster(uint16_t);
 void setPicSlave(uint16_t);
+void rtlHandler();
+
 
 #pragma pack(push)
 #pragma pack(1)
@@ -36,13 +38,9 @@ void tickHandler() {
 	//video[i++] = i;	
 }
 
-void test(){
-	ncPrint("hola");
-}
-
 typedef void (*handler_t)(void);
 
-handler_t handlers[] = {tickHandler,keyBoardHandler,0,0,0,0,0,0,0,0,0,test};
+handler_t handlers[] = {tickHandler,keyBoardHandler,0,0,0,0,0,0,0,0,0,rtlHandler};
 
 void irqDispatcher(int irq) {
 	handlers[irq]();

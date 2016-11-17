@@ -26,6 +26,7 @@ static void * const sampleDataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
 
+void sendmessage();
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -90,12 +91,15 @@ void * initializeKernelBinary()
 
 int main()
 {	
-	clearScreen();
+	ncClear();
 	initializeInterruptions();
 	
 	//searchRTL();
 	activeDMA();
 	initRTL();
+	int i;
+	for(i=0;i<1000000000;i++);
+	sendmessage();
 
 	//((EntryPoint)sampleCodeModuleAddress)();
 	return 0;

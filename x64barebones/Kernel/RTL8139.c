@@ -5,6 +5,7 @@
 
 #define IO_ADDRESS 0xC000
 #define TURN_ON 0x52
+#define ISR 0x3E
 
 #define RECIEVE_DESC 0x30
 #define TSAD0 0x20
@@ -12,7 +13,9 @@
 #define TSAD2 0x28
 #define TSAD3 0x2C
 
-#define RECIEVE_STATUS 0
+#define TOK (1<<2) //packet transmision completed succesfully
+#define ROK 1		//succesfull completition of packet reception
+
 
 #define BUFFER_SIZE 100 
 
@@ -49,8 +52,20 @@ void sendmessage(){
 	buffer[1][0]='h';
 	buffer[1][1]='o';
 	buffer[1][2]=0;
-	sysOutLong( IO_ADDRESS + 0x10, 3);
+	sysOutLong( IO_ADDRESS + 0x10, 3); /* bits 0 to 12 set with message size, bit 13 (OWN) with 0, bits 16 to 21 with 0*/
 
+}
+
+void rtlHandler(){
+	uint16_t status = sysInWord( IO_ADDRESS + ISR);
+
+	if(status & TOK){
+		ncPrint("Message sent");
+	}
+	else{
+		ncPrint("Message recieved");
+	}
+	initRTL();
 }
 
 void initRTL(){
@@ -59,5 +74,5 @@ void initRTL(){
 	setImrIsr();
 	configRCR();
 	enableRTL();
-	sendmessage();
+	//sendmessage();
 }
