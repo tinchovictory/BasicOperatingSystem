@@ -92,12 +92,15 @@ int main()
 	ncClear();
 	initializeInterruptions();
 	
-	//searchRTL();
-	activeDMA();
+	searchRTL();
+	//activeDMA();
 	initRTL();
+	ncPrint("RTL initalized");ncNewline();
 	int i;
-	for(i=0;i<1000000000;i++);
+	for(i=0;i<800000000;i++);
 	sendMsg();
+	ncNewline();
+	ncPrint("Finished");
 
 	//((EntryPoint)sampleCodeModuleAddress)();
 	return 0;

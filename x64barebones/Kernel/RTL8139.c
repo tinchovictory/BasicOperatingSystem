@@ -52,7 +52,7 @@ void transmit(ethFrame * frame){
 	if(frame == NULL){
 		return;
 	}
-
+	//while (!(sysInLong(sysInWord( IO_ADDRESS + ISR)) & 0x2000));
 	int lenght = 0;
 
 	/* Copy ethernet frame to transmit buffer */
@@ -67,9 +67,9 @@ void transmit(ethFrame * frame){
 	trBuffer[0][lenght] = frame->frameCheck;
 	lenght += 2;
 
-	for(int i=0; i<200; i++){
-		ncPrintChar(trBuffer[0][i]);	
-	}
+	//for(int i=0; i<200; i++){
+	//	ncPrintChar(trBuffer[0][i]);	
+	//}
 
 	sysOutLong( IO_ADDRESS + 0x10, lenght & 0xFFF);//clear own bit
 
@@ -97,12 +97,39 @@ void rtlHandler(){
 
 	if( (status & CHECK_ROK) != 0 ){ // ISR bit 0 enabled indicates Recive OK
 
-		ncPrint("Message recieved");
-		ncNewline();
-		for(int i=0; i<200; i++){
-			ncPrintChar(reBuffer[i]);
+		ncPrint("Message recieved");ncNewline();
+		ethFrame * frame= reBuffer+3;
+		ncNewline();ncPrint("Mac destination");ncNewline();
+		for(int i=0; i<MAC_SIZE; i++){
+			ncPrintHex(frame->macDest[i]);
 		}
-		ncPrint("done");
+		ncNewline();ncPrint("Mac Source");ncNewline();
+		for(int i=0; i<MAC_SIZE; i++){
+			ncPrintHex(frame->macSrc[i]);
+		}
+		ncNewline();ncPrint("lenght");ncNewline();
+		ncPrintDec(frame->lenght);ncNewline();
+		ncNewline();ncPrint("Message");ncNewline();
+		for(int i=0; i<100; i++){
+			ncPrintChar(frame->payload[i]);
+		}
+
+
+		/*int i;
+		ncPrint("Mac destination");ncNewline();
+		for( i=0; i<MAC_SIZE; i++){
+			ncPrintHex(reBuffer[i]);
+		}
+		ncNewline();
+		ncPrint("Mac source");ncNewline();
+		for( ; i<MAC_SIZE; i++){
+			ncPrintHex(reBuffer[i]);
+		}
+		int * len= reBuffer+i;
+		int lenght= *len;
+		i+=2;
+		ncPrint(reBuffer+i);
+		ncPrint("done");*/
 
 		//pongo el ROK en 0
 		sysOutWord( IO_ADDRESS + ISR, CLEAR_ROK);
@@ -124,6 +151,7 @@ ncPrint("Message sent");
 		ncPrint("Message recieved");
 	}
 	initRTL();*/
+	initRTL();
 }
 
 void initRTL(){
