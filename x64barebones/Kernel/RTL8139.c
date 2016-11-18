@@ -66,11 +66,6 @@ void transmit(ethFrame * frame){
 	lenght += frame->lenght;
 	trBuffer[0][lenght] = frame->frameCheck;
 	lenght += 2;
-
-	//for(int i=0; i<200; i++){
-	//	ncPrintChar(trBuffer[0][i]);	
-	//}
-
 	sysOutLong( IO_ADDRESS + 0x10, lenght & 0xFFF);//clear own bit
 
 }
@@ -88,23 +83,12 @@ void getMacAdress(uint8_t macDest[MAC_SIZE]){
 
 
 void sendMsg(char * message, int len){
-	
-	//ethFrame frame = {{0xDE,0x00,0x40,0xAA,0x21,0x2E},{0xDE,0x00,0x40,0xAA,0x21,0x2E},100,{'h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l',0},'b'};
-	//frame.payload[1] = 'c';
 	ethFrame frame;
 	getMacAdress(frame.macDest);
 	getMacAdress(frame.macSrc);
 	frame.lenght=len;
 	mymemcpy(frame.payload,message,len);
 	frame.frameCheck='b';
-
-
-	/*frame.macDest[0] = 
-	frame.macDest = {0xDE,0x00,0x40,0xAA,0x21,0x2E};
-	frame.macSrc = {0xDE,0x00,0x40,0xAA,0x21,0x2E};
-	frame.lenght = 3;
-	frame.payload = {'h','o''l',0};
-	frame.frameCheck = 0;*/
 	transmit(&frame);
 }
 
@@ -130,23 +114,6 @@ void rtlHandler(){
 			ncPrintChar(frame->payload[i]);
 		}
 
-
-		/*int i;
-		ncPrint("Mac destination");ncNewline();
-		for( i=0; i<MAC_SIZE; i++){
-			ncPrintHex(reBuffer[i]);
-		}
-		ncNewline();
-		ncPrint("Mac source");ncNewline();
-		for( ; i<MAC_SIZE; i++){
-			ncPrintHex(reBuffer[i]);
-		}
-		int * len= reBuffer+i;
-		int lenght= *len;
-		i+=2;
-		ncPrint(reBuffer+i);
-		ncPrint("done");*/
-
 		//pongo el ROK en 0
 		sysOutWord( IO_ADDRESS + ISR, CLEAR_ROK);
 
@@ -159,14 +126,6 @@ void rtlHandler(){
 		sysOutWord( IO_ADDRESS + ISR, status | CLEAR_TOK);
 
 	}
-
-	/*if(status & TOK){
-		ncPrint("Message sent");
-	}
-	else{
-		ncPrint("Message recieved");
-	}
-	initRTL();*/
 	initRTL();
 }
 
