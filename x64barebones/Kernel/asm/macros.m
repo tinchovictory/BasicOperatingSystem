@@ -49,3 +49,21 @@
 
 	iretq
 %endmacro
+
+%macro irqHandlerSlave 1
+	pushaq
+
+	mov rdi, %1
+	call irqDispatcher
+	
+	mov al, 20h ; EOI
+	out 0A0h, al ; moving EOI to PIC2_COMMAND
+
+	mov al, 20h ; EOI
+	out 20h, al ; moving EOI to PIC1_COMMAND
+	
+	popaq
+
+	iretq
+%endmacro
+

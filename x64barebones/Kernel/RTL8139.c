@@ -113,6 +113,7 @@ void rtlHandler(){
 		for(int i=0; i<frame->lenght; i++){
 			ncPrintChar(frame->payload[i]);
 		}
+		ncNewline();
 
 		//pongo el ROK en 0
 		sysOutWord( IO_ADDRESS + ISR, CLEAR_ROK);

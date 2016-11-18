@@ -18,7 +18,7 @@ irq0Handler:
 irq1Handler:
 	irqHandler 1
 irq11Handler:
-	irqHandler 11
+	irqHandlerSlave 11
 	
 
 
