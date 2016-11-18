@@ -18,15 +18,16 @@ void mymemcpy( void * dest, void * src, int length){
 	}
 }
 
-void command(char * str){
+int command(char * str){
 	if(startsWith("send ",str)){
-		ethMsg msg={{0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},{0},0};
-		mymemcpy(msg.msg,str+5,strlen(str+5));
-		msg.length=strlen(str+5);
-		write(2,&msg,msg.length);
+		return 1;
 	}else{
-		puts("WRONG COMMAND!");
+		ethMsg msg={{0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},{0},0};
+		mymemcpy(msg.msg,str,strlen(str));
+		msg.length=strlen(str);
+		write(2,&msg,msg.length);
 	}
+	return 0;
 }
 
 void getMsg(){
@@ -50,32 +51,67 @@ void getMsg(){
 	puts("---------End of message----");
 }
 
+
+
+void deleteLine(int amount){
+	while(amount){
+		putchar('\b');
+		amount--;
+	}
+}
+
+
 void myChat(){
 	printf("Este es el chat!\n" );
 	char buffer[200];
 	int i=0;
+	int exit=0;
 	char c;
-	//while((c=getchar())!= 'q'){
-	while(1){
-		printf("Chat -> ");
-
-		//verifico si recibi algo
-		getMsg();
-		
-
-		while ((c=getchar())!= '\n'){
-			if(c != '\b'){
-				buffer[i++]=c;
-				putchar(c);
-			}else if (i>0){
-				i--;
-				putchar(c);
-			}	
-
+	int deleteFlag=0;
+	ethMsg msg;
+	
+	while(!exit){
+		//printf("You: ");
+		if(i==0 && !deleteFlag){
+			printf("You: ");
 		}
-		putchar(c);
-		buffer[i]=0;
-		command(buffer);
-		i=0;
+		//verifico si recibi algo
+		int cFlag;
+		int mFlag;
+
+
+		while ((cFlag=read(1,&c,1))==0 && (mFlag=read(2,&msg,100))==0);
+			if(cFlag){
+				if(c == '\n'){
+					buffer[i]=0;
+					exit=command(buffer);//mandar mensaje
+					i=0;
+					putchar(c);
+				}else if(c == '\b'){
+					if(i>0){
+						putchar(c);
+						i--;
+					}else{
+						deleteFlag=1;
+					}
+				}else{
+					buffer[i++]=c;
+					putchar(c);
+					deleteFlag=0;
+				}	
+
+				
+				cFlag=0;
+			}
+			if(mFlag){
+				buffer[i]=0;
+				deleteLine(i + 5);//borrarlinea
+				printf("%s\n", msg.msg);				//imprimir mensaje
+				if(i!=0){
+					printf("You: %s",buffer);				//volver a imprimir linea
+				}						
+				mFlag=0;
+			}
 	}
+
 }

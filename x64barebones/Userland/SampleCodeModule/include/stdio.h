@@ -2,6 +2,7 @@
 #define STDIO
 
 #include <stdint.h>
+int printString(char * str);
 
 int putchar(char c);
 
