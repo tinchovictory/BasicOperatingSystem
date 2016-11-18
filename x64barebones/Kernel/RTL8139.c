@@ -75,14 +75,30 @@ void transmit(ethFrame * frame){
 
 }
 
-void sendMsg(){
-	/*buffer[1][0]='h';
-	buffer[1][1]='o';
-	buffer[1][2]=0;*/
-	//sysOutLong( IO_ADDRESS + 0x10, 3); /* bits 0 to 12 set with message size, bit 13 (OWN) with 0, bits 16 to 21 with 0*/
-	ethFrame frame = {{0xDE,0x00,0x40,0xAA,0x21,0x2E},{0xDE,0x00,0x40,0xAA,0x21,0x2E},100,{'h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l',0},'b'};
-	frame.payload[1] = 'c';
+void getMacAdress(uint8_t macDest[MAC_SIZE]){
+	uint32_t mac=sysInLong(IO_ADDRESS);
+	macDest[0]=mac;
+	macDest[1]=mac>>8;
+	macDest[2]=mac>>16;
+	macDest[3]=mac>>24;
+	mac=sysInLong(IO_ADDRESS);
+	macDest[4]=mac;
+	macDest[5]=mac>>8;
+}
+
+
+void sendMsg(char * message, int len){
 	
+	//ethFrame frame = {{0xDE,0x00,0x40,0xAA,0x21,0x2E},{0xDE,0x00,0x40,0xAA,0x21,0x2E},100,{'h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l','h','o','l',0},'b'};
+	//frame.payload[1] = 'c';
+	ethFrame frame;
+	getMacAdress(frame.macDest);
+	getMacAdress(frame.macSrc);
+	frame.lenght=len;
+	mymemcpy(frame.payload,message,len);
+	frame.frameCheck='b';
+
+
 	/*frame.macDest[0] = 
 	frame.macDest = {0xDE,0x00,0x40,0xAA,0x21,0x2E};
 	frame.macSrc = {0xDE,0x00,0x40,0xAA,0x21,0x2E};
@@ -98,7 +114,7 @@ void rtlHandler(){
 	if( (status & CHECK_ROK) != 0 ){ // ISR bit 0 enabled indicates Recive OK
 
 		ncPrint("Message recieved");ncNewline();
-		ethFrame * frame= reBuffer+3;
+		ethFrame * frame= reBuffer+4;
 		ncNewline();ncPrint("Mac destination");ncNewline();
 		for(int i=0; i<MAC_SIZE; i++){
 			ncPrintHex(frame->macDest[i]);
@@ -110,7 +126,7 @@ void rtlHandler(){
 		ncNewline();ncPrint("lenght");ncNewline();
 		ncPrintDec(frame->lenght);ncNewline();
 		ncNewline();ncPrint("Message");ncNewline();
-		for(int i=0; i<100; i++){
+		for(int i=0; i<frame->lenght; i++){
 			ncPrintChar(frame->payload[i]);
 		}
 
@@ -137,7 +153,7 @@ void rtlHandler(){
 
 	}else if( (status & CHECK_TOK) != 0 ){ // ISR bit 2 enabled indicates Transmit OK
 
-ncPrint("Message sent");
+	ncPrint("Message sent");
 
 		//pongo el TOK en 0
 		sysOutWord( IO_ADDRESS + ISR, status | CLEAR_TOK);

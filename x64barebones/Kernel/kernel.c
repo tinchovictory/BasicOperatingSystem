@@ -98,7 +98,7 @@ int main()
 	ncPrint("RTL initalized");ncNewline();
 	int i;
 	for(i=0;i<800000000;i++);
-	sendMsg();
+	sendMsg("HOLA QUE TAL",13);
 	ncNewline();
 	ncPrint("Finished");
 

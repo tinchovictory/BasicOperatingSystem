@@ -5,6 +5,6 @@
 
 void initRTL();
 
-void sendMsg();
+void sendMsg(char * message, int len);
 
 #endif
