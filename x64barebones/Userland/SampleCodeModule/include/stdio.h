@@ -21,4 +21,6 @@ void scanfbuffer(const char *format, ...);
 
 void getline(char* buffer);
 
+int startsWith(const char * str1, const char * str2);
+
 #endif

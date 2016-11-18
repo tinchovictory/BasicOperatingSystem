@@ -2,7 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include "myGame.h"
-#include <systemCalls.h>
+#include <myChat.h>
+//#include <systemCalls.h>
 
 void clearScreen();
 /*
@@ -38,7 +39,8 @@ void processComand(char * buffer){
 	}
 	else if(!strcmp("clear",buffer)){
 		clearScreen();
-	}else if(startsWith("chat ",buffer)){
+	}else if(startsWith("chat",buffer)){
+		myChat();
 		//ethMsg msg1={{0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},0,0};
 		//mymemcpy(msg1.msg,buffer+5,strlen(buffer+5));
 		//msg1.length=strlen(buffer+5);

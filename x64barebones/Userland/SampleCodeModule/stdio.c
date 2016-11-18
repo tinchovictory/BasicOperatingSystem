@@ -58,6 +58,7 @@ int getchar(){
 
 int ungetc(int c){
 	buffer[i++] = c;
+	return 0;//QUE DEVUELVE?
 }
 
 int putchar(char c){
@@ -279,7 +280,7 @@ int startsWith(const char * str1, const char * str2){
 }
 
 void getline(char* buffer){
-	int i=0;
+/*	int i=0;
 	char c;
 	printf("$> ");
 	while ((c=getchar())!= '\n'){
@@ -295,5 +296,5 @@ void getline(char* buffer){
 	buffer[i]=0;
 	processComand(buffer);
 	return;
-}
+*/}
 
