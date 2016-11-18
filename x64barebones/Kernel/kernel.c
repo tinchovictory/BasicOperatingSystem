@@ -92,15 +92,21 @@ int main()
 	ncClear();
 	initializeInterruptions();
 	
-	searchRTL();
+	//searchRTL();
+	activeRTLdma();
 	//activeDMA();
 	initRTL();
 	ncPrint("RTL initalized");ncNewline();
 	int i;
 	for(i=0;i<800000000;i++);
 	sendMsg("HOLA QUE TAL",13);
+	for(i=0;i<800000000;i++);
+	sendMsg("ANDA?",6);
+//sendMsg("ANDA?",6);
 	ncNewline();
 	ncPrint("Finished");
+
+	while(1);
 
 	//((EntryPoint)sampleCodeModuleAddress)();
 	return 0;

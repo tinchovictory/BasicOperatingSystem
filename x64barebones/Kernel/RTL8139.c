@@ -116,7 +116,7 @@ void rtlHandler(){
 		ncNewline();
 
 		//pongo el ROK en 0
-		sysOutWord( IO_ADDRESS + ISR, CLEAR_ROK);
+		sysOutWord( IO_ADDRESS + ISR, status & CLEAR_ROK);
 
 
 	}else if( (status & CHECK_TOK) != 0 ){ // ISR bit 2 enabled indicates Transmit OK
@@ -124,7 +124,7 @@ void rtlHandler(){
 	ncPrint("Message sent");
 
 		//pongo el TOK en 0
-		sysOutWord( IO_ADDRESS + ISR, status | CLEAR_TOK);
+		sysOutWord( IO_ADDRESS + ISR, status & CLEAR_TOK);
 
 	}
 	initRTL();

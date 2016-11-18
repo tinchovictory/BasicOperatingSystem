@@ -25,9 +25,7 @@ irq11Handler:
 sysCallHandler:
 	pushaq
 
-	;recivo parametros en un orden y los oredno en el orden que necesito
-
-	
+	;recivo parametros en un orden y es el mismo orden de salida
 	call systemCall
 	
 	mov [return], rax ; guardo el valor de retorno
