@@ -1,6 +1,7 @@
 #include "systemCalls.h"
 #include <videoDriver.h>
 #include <keyBoardDriver.h>
+#include <RTL8139.h>
 
 #define SYS_CALL_READ 1
 #define SYS_CALL_WRITE 2
@@ -19,33 +20,40 @@ uint64_t clearScreenSys(){
 	clearScreen();
 	return 0;
 }
-uint64_t write(uint64_t fileDescriptor, char * buf, uint64_t nBytes);
 
-uint64_t read(uint64_t fileDescriptor, char * buf, uint64_t nBytes){
+uint64_t read(uint64_t fileDescriptor, void * buf, uint64_t nBytes){
 
 	if(fileDescriptor == STANDARD_IO_FD){
+		char * myBuf = (char *) buf;
 		int cont = 1, readBytes=0;
 		for (int i = 0; i < nBytes && cont; i++){
-			*(buf + i) = (char) getKey();
-			if(*(buf + i) == 0){
+			*(myBuf + i) = (char) getKey();
+			if(*(myBuf + i) == 0){
 				cont = 0;
 			}else{
 				readBytes++;
 			}
 		}
 		return readBytes;
+	}else if(fileDescriptor == ETHERNET_FD){
+		return getMsg((ethMsg *) buf);
 	}
 	return -1;
 }
 
-uint64_t write(uint64_t fileDescriptor, char * buf, uint64_t nBytes){
+uint64_t write(uint64_t fileDescriptor, void * buf, uint64_t nBytes){
 
 	if(fileDescriptor == STANDARD_IO_FD){
+		char * myBuf = (char *) buf;
 		int i;
-		for(i = 0; i < nBytes && buf[i] != 0; i++){
-			printCharacters(buf[i]);
+		for(i = 0; i < nBytes && myBuf[i] != 0; i++){
+			printCharacters(myBuf[i]);
 		}
 		return i;
+	}else if(fileDescriptor == ETHERNET_FD){
+		//ethMsg * myBuf = (ethMsg *) buf;
+		sendMsg(*((ethMsg *) buf));
+		return nBytes;
 	}
 	return -1;
 }
@@ -64,9 +72,9 @@ uint64_t memoryManagement(uint64_t fnCode, uint64_t nBytes){
 
 uint64_t systemCall(uint64_t systemCallNumber, uint64_t fileDescriptor, void * buf, uint64_t nBytes){
 	if(systemCallNumber == SYS_CALL_READ){
-		return read(fileDescriptor, (char *) buf, nBytes);
+		return read(fileDescriptor, buf, nBytes);
 	}else if(systemCallNumber == SYS_CALL_WRITE){
-		return write(fileDescriptor, (char *) buf, nBytes);
+		return write(fileDescriptor, buf, nBytes);
 	}else if(systemCallNumber == SYS_CALL_CLEAR_SCREEN){
 		return clearScreenSys();
 	}else if(systemCallNumber == SYS_CALL_MEMORY){

@@ -7,10 +7,10 @@
 
 #include <videoDriver.h>
 #include <keyBoardDriver.h>
-
-
 #include <pci.h>
 #include <RTL8139.h>
+
+#include <systemCalls.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -87,6 +87,21 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
+
+void printEthMsg(ethMsg msg1){
+	ncNewline();ncPrint("Mac destination: ");
+		for(int i=0; i<MAC_SIZE; i++){
+			ncPrintHex(msg1.mac[i]);
+		}
+		ncNewline();ncPrint("length: ");
+		ncPrintDec(msg1.length);ncNewline();
+		ncPrint("Message: ");ncNewline();
+		for(int i=0; i<msg1.length; i++){
+			ncPrintChar(msg1.msg[i]);
+		}
+		ncNewline();
+		ncPrint("---------End of message----");ncNewline();ncNewline();
+}
 int main()
 {	
 	ncClear();
@@ -97,17 +112,44 @@ int main()
 	//activeDMA();
 	initRTL();
 	ncPrint("RTL initalized");ncNewline();
-	int i;
+	
+
+	/*int i;
+	ethMsg msg1={{0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},{'h','o','l','a',0},5};//DE:00:40:AA:21:2E
+	ethMsg gMsg ;
+
 	for(i=0;i<800000000;i++);
-	sendMsg("HOLA QUE TAL",13);
-	for(i=0;i<800000000;i++);
-	sendMsg("ANDA?",6);
+	//sendMsg(msg1);
+	systemCall(2, 2, &msg1, 100);
+//for(i=0;i<800000000;i++);
+systemCall(2, 2, &msg1, 100);
+for(i=0;i<800000000;i++);
+	if(systemCall(1,2,&gMsg,100)){
+		printEthMsg(gMsg);
+	}else{
+		ncPrint("No Msg");
+	}
+	if(systemCall(1,2,&gMsg,100)){
+		printEthMsg(gMsg);
+	}else{
+		ncPrint("No Msg");
+	}
+	if(systemCall(1,2,&gMsg,100)){
+		printEthMsg(gMsg);
+	}else{
+		ncPrint("No Msg");
+	}
+	//printEthMsg(gMsg);
+	//getMsg(&gMsg);
+	//printEthMsg(gMsg);
+	//for(i=0;i<800000000;i++);
+	//sendMsg("ANDA?",6);
 //sendMsg("ANDA?",6);
-	ncNewline();
-	ncPrint("Finished");
-
-	while(1);
-
-	//((EntryPoint)sampleCodeModuleAddress)();
+	//ncNewline();
+	//ncPrint("Finished");
+*/
+	
+	ncClear();
+	((EntryPoint)sampleCodeModuleAddress)();
 	return 0;
 }

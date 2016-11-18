@@ -22,28 +22,34 @@
 #define CLEAR_TOK 0xFB
 #define CLEAR_ROK 0xFE
 
-#define TR_BUFFER_SIZE 10000 
+#define TR_BUFFER_SIZE 10000 //CAMBIAR
 #define RE_BUFFER_SIZE 10000
 
-#define MAC_SIZE 6
+#define MESSAGE_BUFFER_SIZE 100
+
+#define BROADCAST 0xFF
 
 static char trBuffer[3][TR_BUFFER_SIZE] = {{0}};
 static char reBuffer[RE_BUFFER_SIZE] = {0};
 
+
 typedef struct {
 	uint8_t macDest[MAC_SIZE];
 	uint8_t macSrc[MAC_SIZE];
-	uint16_t lenght;
-	uint8_t payload[1000];
+	uint16_t length;
+	uint8_t payload[1000];//CAMBIAR
 	uint32_t frameCheck;
 } ethFrame;
 
+static ethFrame messages[MESSAGE_BUFFER_SIZE]={{0}};
+static int nexToWrite=0;
+static int nextToRead=0;
 
-void mymemcpy( void * dest, void * src, int lenght){
+void mymemcpy( void * dest, void * src, int length){
 	char * d = dest;
 	char * s = src;
-	//char * srcT = (char *) src;
-	for(int i = 0; i < lenght; i++){
+
+	for(int i = 0; i < length; i++){
 		d[i] = s[i];
 	}
 }
@@ -52,22 +58,24 @@ void transmit(ethFrame * frame){
 	if(frame == NULL){
 		return;
 	}
-	//while (!(sysInLong(sysInWord( IO_ADDRESS + ISR)) & 0x2000));
-	int lenght = 0;
+
+	int length = 0;
 
 	/* Copy ethernet frame to transmit buffer */
-	mymemcpy(trBuffer[0]+lenght,frame->macDest,MAC_SIZE);
-	lenght += MAC_SIZE;
-	mymemcpy(trBuffer[0]+lenght,frame->macSrc,MAC_SIZE);
-	lenght += MAC_SIZE;
-	trBuffer[0][lenght] = frame->lenght;
-	lenght += 2;
-	mymemcpy(trBuffer[0]+lenght,frame->payload,frame->lenght);
-	lenght += frame->lenght;
-	trBuffer[0][lenght] = frame->frameCheck;
-	lenght += 2;
-	sysOutLong( IO_ADDRESS + 0x10, lenght & 0xFFF);//clear own bit
+	mymemcpy(trBuffer[0]+length,frame->macDest,MAC_SIZE);
+	length += MAC_SIZE;
+	mymemcpy(trBuffer[0]+length,frame->macSrc,MAC_SIZE);
+	length += MAC_SIZE;
+	trBuffer[0][length] = frame->length;
+	length += 2;
+	mymemcpy(trBuffer[0]+length,frame->payload,frame->length);
+	length += frame->length;
+	trBuffer[0][length] = frame->frameCheck;
+	length += 2;
 
+	sysOutLong( IO_ADDRESS + 0x10, length & 0xFFF);//clear own bit
+
+	//esperar hasta que termine de mandar el msg
 }
 
 void getMacAdress(uint8_t macDest[MAC_SIZE]){
@@ -76,52 +84,108 @@ void getMacAdress(uint8_t macDest[MAC_SIZE]){
 	macDest[1]=mac>>8;
 	macDest[2]=mac>>16;
 	macDest[3]=mac>>24;
-	mac=sysInLong(IO_ADDRESS);
+	mac=sysInLong(IO_ADDRESS+4);
 	macDest[4]=mac;
 	macDest[5]=mac>>8;
 }
 
-
-void sendMsg(char * message, int len){
+void sendMsg(ethMsg message){
 	ethFrame frame;
-	getMacAdress(frame.macDest);
+	for(int i=0; i<MAC_SIZE; i++){
+		frame.macDest[i]=message.mac[i];
+	}
+
 	getMacAdress(frame.macSrc);
-	frame.lenght=len;
-	mymemcpy(frame.payload,message,len);
+	frame.length=message.length;
+	mymemcpy(frame.payload,message.msg,message.length);
 	frame.frameCheck='b';
+
 	transmit(&frame);
 }
+
+int getMsg(ethMsg * msg){
+	
+	if(nextToRead == nexToWrite){//estoy en el final del buffer, no tengo mensajes
+		return 0;
+	}
+
+	//pongo el mensaje en msg
+	mymemcpy(msg->mac,messages[nextToRead].macSrc,MAC_SIZE);
+	msg->length=messages[nextToRead].length;
+	mymemcpy(msg->msg,messages[nextToRead].payload,msg->length);
+	nextToRead++;
+
+	nextToRead %= MESSAGE_BUFFER_SIZE;
+
+	return msg->length + MAC_SIZE + sizeof(msg->length);
+
+}
+
+
+void printFrame(ethFrame * frame){
+	ncNewline();ncPrint("Mac destination: ");
+		for(int i=0; i<MAC_SIZE; i++){
+			ncPrintHex(frame->macDest[i]);
+		}
+		ncNewline();ncPrint("Mac Source: ");
+		for(int i=0; i<MAC_SIZE; i++){
+			ncPrintHex(frame->macSrc[i]);
+		}
+		ncNewline();ncPrint("length: ");
+		ncPrintDec(frame->length);ncNewline();
+		ncPrint("Message: ");
+		for(int i=0; i<frame->length; i++){
+			ncPrintChar(frame->payload[i]);
+		}
+		ncNewline();
+		ncPrint("---------End of message----");ncNewline();ncNewline();
+}
+
+int isForMe( ethFrame * frame ){
+	uint8_t myMAC[MAC_SIZE];
+	getMacAdress(myMAC);
+	int cont = 1;
+	for(int i = 0; i < MAC_SIZE && cont; i++){
+		if(frame->macDest[i] != myMAC[i]){
+			cont = 0;
+		}
+	}
+
+	if(!cont){
+		cont = 1;
+		for(int i = 0; i < MAC_SIZE && cont; i++){
+			if( frame->macDest[i] != BROADCAST){
+				cont = 0;
+			}
+		}
+	}
+	return cont;
+}
+
 
 void rtlHandler(){
 	uint16_t status = sysInWord( IO_ADDRESS + ISR);
 
 	if( (status & CHECK_ROK) != 0 ){ // ISR bit 0 enabled indicates Recive OK
 
-		ncPrint("Message recieved");ncNewline();
-		ethFrame * frame= reBuffer+4;
-		ncNewline();ncPrint("Mac destination");ncNewline();
-		for(int i=0; i<MAC_SIZE; i++){
-			ncPrintHex(frame->macDest[i]);
-		}
-		ncNewline();ncPrint("Mac Source");ncNewline();
-		for(int i=0; i<MAC_SIZE; i++){
-			ncPrintHex(frame->macSrc[i]);
-		}
-		ncNewline();ncPrint("lenght");ncNewline();
-		ncPrintDec(frame->lenght);ncNewline();
-		ncNewline();ncPrint("Message");ncNewline();
-		for(int i=0; i<frame->lenght; i++){
-			ncPrintChar(frame->payload[i]);
-		}
-		ncNewline();
+		//ncPrint("-----Message recieved---");ncNewline();
+		ethFrame * frame= (ethFrame *) (reBuffer+4);
 
+		if( !messages[nexToWrite].macDest[0] && isForMe(frame) ){
+			mymemcpy(messages+(nexToWrite++),frame,sizeof(ethFrame));
+			//printFrame(messages+(nextToRead++));
+		}else{
+			//buffer lleno o no es para mi
+			//ncPrint("BUFFER LLENO o no es para mi");
+		}
+		//verifico si llegue al final del buffer de mensajes
+		nexToWrite %= MESSAGE_BUFFER_SIZE;
 		//pongo el ROK en 0
 		sysOutWord( IO_ADDRESS + ISR, status & CLEAR_ROK);
 
-
 	}else if( (status & CHECK_TOK) != 0 ){ // ISR bit 2 enabled indicates Transmit OK
 
-	ncPrint("Message sent");
+	//ncPrint("------Message sent----");ncNewline();ncNewline();
 
 		//pongo el TOK en 0
 		sysOutWord( IO_ADDRESS + ISR, status & CLEAR_TOK);
