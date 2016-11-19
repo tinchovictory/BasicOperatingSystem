@@ -9,6 +9,7 @@ typedef struct {
 	uint8_t mac[MAC_SIZE];
 	uint8_t msg[1000];
 	uint16_t length;
+	uint16_t type;
 } ethMsg;
 
 void initRTL();

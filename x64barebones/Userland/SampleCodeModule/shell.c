@@ -40,6 +40,7 @@ void processComand(char * buffer){
 	else if(!strcmp("clear",buffer)){
 		clearScreen();
 	}else if(startsWith("chat",buffer)){
+		clearScreen();
 		myChat();
 		//ethMsg msg1={{0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},0,0};
 		//mymemcpy(msg1.msg,buffer+5,strlen(buffer+5));

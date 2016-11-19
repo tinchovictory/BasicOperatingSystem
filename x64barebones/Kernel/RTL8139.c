@@ -98,7 +98,7 @@ void sendMsg(ethMsg message){
 	getMacAdress(frame.macSrc);
 	frame.length=message.length;
 	mymemcpy(frame.payload,message.msg,message.length);
-	frame.frameCheck='b';
+	frame.frameCheck=message.type;
 
 	transmit(&frame);
 }
@@ -113,6 +113,7 @@ int getMsg(ethMsg * msg){
 	mymemcpy(msg->mac,messages[nextToRead].macSrc,MAC_SIZE);
 	msg->length=messages[nextToRead].length;
 	mymemcpy(msg->msg,messages[nextToRead].payload,msg->length);
+	msg->type=messages[nextToRead].frameCheck;
 	nextToRead++;
 
 	nextToRead %= MESSAGE_BUFFER_SIZE;
