@@ -84,6 +84,52 @@ void printf(const char* format,...){
 				putchar(va_arg(parameters, int));
 			}else if (format[i]=='d' || format[i]=='i'){
 				putNum(va_arg(parameters,int));
+			}else if(isDigit(format[i])){
+				int margen = 0;
+				int j = 0;
+				while(isDigit(format[i])){
+					margen = margen*10 + format[i] - '0';
+					j++;
+					i++;
+				}
+				if(format[i]=='s'){
+					char * word = va_arg(parameters, char *);
+					int length = strlen(word);
+					if(length < margen){
+						margen -= length;
+						while(margen){
+							putchar(' ');
+							margen--;
+						}
+					}
+					printString(word);
+				}else if(format[i]=='d' || format[i]=='i'){
+					int length;
+					int number = va_arg(parameters, int);
+					int aux = number;
+					while(aux){
+						aux /= 10;
+						length++;
+					}
+					if(length < margen){
+						margen -= length;
+						while(margen){
+							putchar(' ');
+							margen--;
+						}
+					}
+					putNum(number);
+				}else if(format[i]=='c'){
+					margen--;
+					while(margen){
+						putchar(' ');
+						margen--;
+					}
+					putchar(va_arg(parameters, int ));
+				}
+				else{
+					i-=j;
+				}
 			}else{
 				putchar('%');
 				putchar(format[i]);
@@ -95,89 +141,6 @@ void printf(const char* format,...){
 
 	return;
 }
-
-void scanfbuffer(const char *format, ...){
-	char buffer[100];
-	getline(buffer);
-	int j= 0;
-	int i= 0;
-	va_list parameters;
-	va_start(parameters,format);
-	
-	for(i; format[i] != 0; i++){
-
-		while(format[i] != 0 && format[i] != '%' && buffer[j] != '\n'){
-			i++;
-			j++;
-		}
-
-		if (format[i] == 0 || buffer[j] == '\n'){
-			break;
-
-		}else if(format[i] == '%'){
-
-			i++;
-
-			if(format[i] == 'd' || format[i] == 'i'){
-
-				int * number_ptr;
-				number_ptr = va_arg(parameters,int *);
-				*number_ptr = 0;
-
-				while(buffer[j] == ' '){
-					j++;
-				}
-				
-				while( buffer[j] != '\n' && buffer[j] != ' ' && isDigit(buffer[j])){
-				
-					*number_ptr = (*number_ptr)*10 + buffer[j++] -'0';
-				
-				}
-				
-				if(buffer[j] == '\n'){
-					break;
-				}
-		
-			}else if(format[i] == 's'){
-		
-				char * string_ptr;
-				string_ptr = va_arg(parameters,char *);
-		
-				while(buffer[j] == ' '){
-					j++;
-				}
-		
-				while(buffer[j] != '\n' && buffer[j] != ' '){
-		
-					*string_ptr = buffer[j];
-					string_ptr++;
-					j++;
-		
-				}
-		
-				*string_ptr = 0;
-		
-				if(buffer[j] == '\n'){
-					break;
-				}
-		
-			}else if(format[i] == 'c'){
-		
-				char * char_ptr;
-				char_ptr = va_arg(parameters,char *);
-		
-				while(buffer[j] == ' '){
-					j++;
-				}
-		
-				*char_ptr = buffer[j];
-			}
-		}	
-	}
-	va_end(parameters);
-	return;
-}
-
 
 void scanf(const char *format, ...){
 

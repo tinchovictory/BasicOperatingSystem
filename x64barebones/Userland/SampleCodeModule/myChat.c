@@ -69,18 +69,33 @@ void myChat(){
 	char c;
 	int deleteFlag=0;
 	ethMsg msg;
+
+
+
+	char you[50];
+	int j = 0;
+	printf("%s\n", "Ingrese su nombre:");
+	while((c=getchar())!='\n' && j<50){
+		putchar(c);
+		you[j++] = c;
+	}
+	you[j] = 0;
+	putchar('\n');
+
+
 	
 	while(!exit){
 		//printf("You: ");
-		if(i==0 && !deleteFlag){
-			printf("You: ");
+		if(!i && !deleteFlag){
+			//printf("You: ");
+			printf("%s: ",you);
 		}
 		//verifico si recibi algo
 		int cFlag;
 		int mFlag;
 
 
-		while ((cFlag=read(1,&c,1))==0 && (mFlag=read(2,&msg,100))==0);
+		while (!(cFlag=read(1,&c,1)) && !(mFlag=read(2,&msg,100)));
 			if(cFlag){
 				if(c == '\n'){
 					buffer[i]=0;
@@ -88,7 +103,7 @@ void myChat(){
 					i=0;
 					putchar(c);
 				}else if(c == '\b'){
-					if(i>0){
+					if(i){
 						putchar(c);
 						i--;
 					}else{
@@ -105,10 +120,12 @@ void myChat(){
 			}
 			if(mFlag){
 				buffer[i]=0;
-				deleteLine(i + 5);//borrarlinea
-				printf("%s\n", msg.msg);				//imprimir mensaje
-				if(i!=0){
-					printf("You: %s",buffer);				//volver a imprimir linea
+				deleteLine(2+strlen(you));
+				//deleteLine(i + 5);//borrarlinea
+				printf("Your Friend: %s\n", msg.msg);				//imprimir mensaje
+				if(i){
+					printf("%s: %s",you,buffer);	
+					//printf("You: %s",buffer);				//volver a imprimir linea
 				}						
 				mFlag=0;
 			}
