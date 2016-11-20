@@ -117,7 +117,7 @@ void send(int type, uint8_t dest[MAC_SIZE] , char * message){
 
 	ethMsg msg={{0},{0},0};
 	mymemcpy(msg.mac,dest,MAC_SIZE);
-	mymemcpy(msg.msg,message,strlen(message));
+	mymemcpy(msg.msg,message,strlen(message));// hay que USAR stringCOPY
 	msg.length=strlen(message);
 	msg.type=type;
 	write(2,&msg,msg.length);
@@ -125,6 +125,7 @@ void send(int type, uint8_t dest[MAC_SIZE] , char * message){
 
 void save(char * user, uint8_t mac[MAC_SIZE]){
 	mymemcpy(userList[usersCount],user,strlen(user));
+	userList[usersCount][strlen(user)]=0;
 	mymemcpy(macList[usersCount],mac,MAC_SIZE);
 	usersCount++;
 }
