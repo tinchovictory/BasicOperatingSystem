@@ -96,8 +96,9 @@ void sendMsg(ethMsg message){
 	}
 
 	getMacAdress(frame.macSrc);
-	frame.length=message.length;
-	mymemcpy(frame.payload,message.msg,message.length);
+	frame.length=message.length+1;
+	frame.payload[0]=message.type;
+	mymemcpy(frame.payload+1,message.msg,message.length);
 	frame.frameCheck=message.type;
 
 	transmit(&frame);
@@ -111,9 +112,9 @@ int getMsg(ethMsg * msg){
 
 	//pongo el mensaje en msg
 	mymemcpy(msg->mac,messages[nextToRead].macSrc,MAC_SIZE);
-	msg->length=messages[nextToRead].length;
-	mymemcpy(msg->msg,messages[nextToRead].payload,msg->length);
-	msg->type=messages[nextToRead].frameCheck;
+	msg->length=messages[nextToRead].length-1;
+	msg->type=messages[nextToRead].payload[0];
+	mymemcpy(msg->msg,messages[nextToRead].payload+1,msg->length);
 	nextToRead++;
 
 	nextToRead %= MESSAGE_BUFFER_SIZE;
@@ -139,6 +140,8 @@ void printFrame(ethFrame * frame){
 			ncPrintChar(frame->payload[i]);
 		}
 		ncNewline();
+		ncNewline();ncPrint("frameCheck: ");
+		ncPrintDec(frame->frameCheck);ncNewline();
 		ncPrint("---------End of message----");ncNewline();ncNewline();
 }
 

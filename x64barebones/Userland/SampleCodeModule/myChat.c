@@ -3,19 +3,23 @@
 #include <string.h>
 #include <systemCalls.h>
 
-#define USERNAME_LENGTH 50
+#define MAX_USERS 50
+#define USERNAME_MAXLENGTH 50
 #define MAC_SIZE 6
 #define ONLINE 0
 #define OFFLINE 1
 #define MESSAGE 2
 
 
-#define PUBLIC 3
-#define PRIVATE 4
 
 
 
-
+static uint8_t public[MAC_SIZE] ={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+static uint8_t user[USERNAME_MAXLENGTH];
+static uint8_t userList[USERNAME_MAXLENGTH][MAX_USERS];
+static uint8_t macList[MAC_SIZE][MAX_USERS];
+static int usersCount=0;
+static uint8_t generic[]="Your friend";
 
 typedef struct {
 	uint8_t mac[MAC_SIZE];
@@ -35,12 +39,14 @@ void mymemcpy( void * dest, void * src, int length){
 
 int command(char * str){
 	if(!strcmp("exit",str)){
+		send(OFFLINE,public,user);
+		printf("\n        Thanks for using our chat room! Bye bye!\n");
 		return 1;
-	}else{
-		ethMsg msg={{0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},{0},0};
-		mymemcpy(msg.msg,str,strlen(str));
-		msg.length=strlen(str);
-		write(2,&msg,msg.length);
+	}else if(str[0]==0){
+		return 0;
+	}
+	else{
+		send(MESSAGE,public,str);
 	}
 	return 0;
 }
@@ -75,8 +81,12 @@ void deleteLine(int amount){
 	}
 }
 
-void welcome(char * user){
-	printf("        **************Welcome to SkyChat!**************\n" );
+void welcome(){
+	printf("        ***********************************************\n");
+	printf("        **                                           **\n");
+	printf("        **            Welcome to SkyChat!            **\n");
+	printf("        **                                           **\n");
+	printf("        ***********************************************\n");
 	printf("This are the available commands:\n");
 	printf("     exit: exit chat room\n");
 	printf("\n" );
@@ -86,7 +96,7 @@ void welcome(char * user){
 	printf("%s", "What's your name?: ");
 
 
-	while((c=getchar())!='\n' && j<USERNAME_LENGTH){
+	while((c=getchar())!='\n' && j<USERNAME_MAXLENGTH){
 		if(c == '\b'){
 			if(j!=0 ){			
 				putchar(c);
@@ -99,10 +109,12 @@ void welcome(char * user){
 	}
 	user[j] = 0;
 	putchar('\n');
+	putchar('\n');
+	putchar('\n');
 	
 }
-void send(int type, char dest[MAC_SIZE] , char * message){
-	
+void send(int type, uint8_t dest[MAC_SIZE] , char * message){
+
 	ethMsg msg={{0},{0},0};
 	mymemcpy(msg.mac,dest,MAC_SIZE);
 	mymemcpy(msg.msg,message,strlen(message));
@@ -111,8 +123,47 @@ void send(int type, char dest[MAC_SIZE] , char * message){
 	write(2,&msg,msg.length);
 }
 
-void online(char * user){
-	send(ONLINE,PUBLIC,user);
+void save(char * user, uint8_t mac[MAC_SIZE]){
+	mymemcpy(userList[usersCount],user,strlen(user));
+	mymemcpy(macList[usersCount],mac,MAC_SIZE);
+	usersCount++;
+}
+
+void delete(char * user, uint8_t mac[MAC_SIZE]){
+	
+}
+
+int cmpMac(uint8_t mac1[MAC_SIZE],uint8_t mac2[MAC_SIZE]){
+	for(int i = 0; i < MAC_SIZE; i++){
+		if(mac1[i] != mac2[i]){
+			return 0;
+		}
+	}
+	return 1;
+}
+
+char * getName(uint8_t mac[MAC_SIZE]){
+	int i;
+	for(i=0; i<usersCount ;i++){
+		if(cmpMac(mac,macList[i])){
+			return userList[i];
+		}
+	}
+	return generic;
+}
+
+void recieve(ethMsg msg){
+	if(msg.type==ONLINE){
+		printf("           %s is now online!\n",msg.msg );
+		save(msg.msg,msg.mac);//gauradar MAC y nombre de usario
+	}else if(msg.type== OFFLINE){
+		printf("           %s is now offline\n",msg.msg );
+	}else if(msg.type == MESSAGE){
+		msg.msg[msg.length]=0;//convierto el mensja a string
+		printf("%s: %s\n",getName(msg.mac), msg.msg);				//imprimir mensaje
+	}else{
+		printf("ALGO SALIO MAL\n");
+	}
 }
 
 void myChat(){
@@ -121,10 +172,10 @@ void myChat(){
 	int exit=0;
 	char c;
 	int deleteFlag=0;
-	char user[USERNAME_LENGTH];
+	
 
-	welcome(user);
-	online(user);
+	welcome();
+	send(ONLINE,public,user);
 	
 	while(!exit){
 		if(!i && !deleteFlag){
@@ -134,15 +185,21 @@ void myChat(){
 		int cFlag;
 		int mFlag;
 		ethMsg msg;
-
+		/*Aprovecho que el read me devuelve la cantidad de bits que copio
+		 si no hay nada para leer read devuelve cero.
+		 Este while queda loopeando hasta que halla algo para leer*/
 		while ( (cFlag=read(1,&c,1))==0 && (mFlag=read(2,&msg,100))==0 );
 			
 		if(cFlag){
 			if(c == '\n'){
-				buffer[i]=0;
-				exit=command(buffer);//mandar mensaje
-				i=0;
-				putchar(c);
+				if(i!=0){
+					buffer[i]=0;
+					exit=command(buffer);//mandar mensaje
+					i=0;
+					putchar(c);
+				}else{
+					deleteFlag=1;
+				}
 			}else if(c == '\b'){
 				if(i!=0 ){			
 					putchar(c);
@@ -162,9 +219,7 @@ void myChat(){
 		if(mFlag){
 			buffer[i]=0;
 			deleteLine(i+2+strlen(user));
-
-			msg.msg[msg.length]=0;//convierto el ensja a string
-			printf("Your Friend: %s\n", msg.msg);				//imprimir mensaje
+			recieve(msg);
 			
 			if(i){
 				printf("%s: %s",user,buffer);	
