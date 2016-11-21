@@ -61,6 +61,27 @@ char* strcat(char* str1, char* str2){
 	return str1;
 }
 
+
+void strcpy(char *dest, char *src){
+	while(*src){
+		*dest = *src;
+		dest++;
+		src++;
+	}
+	*dest = 0;
+}
+
+
+void strncpy(char *dest, char *src, int n){
+	while(*src && n){
+		*dest = *src;
+		dest++;
+		src++;
+		n--;
+	}
+	*dest = 0;
+}
+
 int strcmp(const char* str1, const char* str2){
 	while((*str1 == *str2) && *str1 != 0 && *str2 != 0){
 		str1++;
@@ -100,9 +121,10 @@ int strstr(char* str1, char* str2){
 int stringToNum(char* number){
 	int ret = 0;
 	int i = 0;
-	for(i; *number;i++){
+	while(*number){
 		ret = ret*10 + *number -'0';
 		number++;
+		i++;
 	}
 	return ret;
 }

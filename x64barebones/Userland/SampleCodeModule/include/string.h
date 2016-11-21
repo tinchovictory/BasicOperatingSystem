@@ -25,4 +25,10 @@ int strcmp(const char* str1, const char* str2);
 
 /* Returns the number that the string number represents */
 int stringToNum(char* number);
+
+
+void strcpy(char *dest, char *src);
+
+
+void strncpy(char *dest, char *src, int n);
 #endif
