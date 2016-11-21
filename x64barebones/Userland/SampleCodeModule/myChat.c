@@ -37,6 +37,14 @@ void mymemcpy( void * dest, void * src, int length){
 	}
 }
 
+void showOnlineUsers(){
+	printf("\nThis are the users online: \n");
+
+	for (int i = 0; i < usersCount; ++i){
+		printf("             %s\n",userList[i] );
+	}
+}
+
 int command(char * str){
 	if(!strcmp("exit",str)){
 		send(OFFLINE,public,user);
@@ -44,6 +52,8 @@ int command(char * str){
 		return 1;
 	}else if(str[0]==0){
 		return 0;
+	}else if(!strcmp("online",str)){
+		showOnlineUsers();
 	}
 	else{
 		send(MESSAGE,public,str);
@@ -89,6 +99,7 @@ void welcome(){
 	printf("        ***********************************************\n");
 	printf("This are the available commands:\n");
 	printf("     exit: exit chat room\n");
+	printf("     online: show users online\n");
 	printf("\n" );
 
 	char c;
