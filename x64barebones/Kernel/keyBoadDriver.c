@@ -25,7 +25,7 @@ static int buffer[BUFFER_SIZE] = {0};
 static int * current = buffer;
 static int * last = buffer;
 
-int uppercase = 0;
+int uppercase = 1;
 
 void keyBoardHandler(){
 	if(checkKeyboard()){
@@ -34,13 +34,11 @@ void keyBoardHandler(){
 
 		//veo si aprete para usar mayusculas
 		if(key == L_SHIFT_PRESSED || key == R_SHIFT_PRESSED){
-			uppercase = 1;
+			uppercase *=-1;
 		}else if(key == L_SHIFT_RELEASED || key == R_SHIFT_RELEASED){
-			uppercase = 0;
-		}else if(key == CAPS_LOCK_PRESSED && uppercase){
-			uppercase = 0;
-		}else if(key == CAPS_LOCK_PRESSED && !uppercase){
-			uppercase = 1;
+			uppercase *=-1;
+		}else if(key == CAPS_LOCK_PRESSED ){
+			uppercase *=-1;
 		}
 
 		if(key >= 128){ // no es un caracter valido
@@ -48,7 +46,7 @@ void keyBoardHandler(){
 		}
 
 
-		if(uppercase){
+		if(uppercase==-1){
 			character = uKeyboard[key];
 		}else{
 			character = lKeyboard[key];
