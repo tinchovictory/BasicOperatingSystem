@@ -159,6 +159,7 @@ int isPrivate(char *str){
 	}
 	name[i] = 0;
 	if(getMac(name)==0){
+		printf("\nI'm sorry %s is not online\n", name);
 		return 0;
 	}
 	return 1;
@@ -192,25 +193,42 @@ void welcome(){
 
 	char c;
 	int j = 0;
+	int flag = 1;
 	printf("%s", "What's your name?: ");
-
-
-	while((c=getchar())!='\n' && j<USERNAME_MAXLENGTH){
-		if(c == '\b'){
-			if(j!=0 ){			
-				putchar(c);
-				j--;
+	while(flag){
+		while((c=getchar())!='\n' && j<USERNAME_MAXLENGTH){
+			if(c == '\b'){
+				if(j!=0 ){			
+					putchar(c);
+					j--;
+				}
+			}else{
+			putchar(c);
+			user[j++] = c;
 			}
+		}
+		user[j] = 0;
+		if(validName(user)){
+			flag = 0;
 		}else{
-		putchar(c);
-		user[j++] = c;
+			printf("\nI'm sorry, your username cannot have spaces.\nPlease insert a new username: ");
+			j=0;
 		}
 	}
-	user[j] = 0;
 	putchar('\n');
 	putchar('\n');
 	putchar('\n');
 	
+}
+
+int validName(char * name){
+	while(*name){
+		if(*name == ' '){
+			return 0;
+		}
+		name++;
+	}
+	return 1;
 }
 
 
@@ -271,7 +289,7 @@ void myChat(){
 	
 	while(!exit){
 		if(!i && !deleteFlag){
-			printf("%s: ",user);
+			printf("\n%s: ",user);
 		}
 		//verifico si recibi algo
 		int cFlag;
