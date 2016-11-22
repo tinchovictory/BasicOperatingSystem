@@ -12,6 +12,28 @@
 #define MSG_MAXLENGTH 1000
 
 
+typedef struct {
+	uint8_t mac[MAC_SIZE];
+	char msg[MSG_MAXLENGTH];
+	uint16_t length;
+	uint8_t type;
+} ethMsg;
+
+void mymemcpy( void * dest, void * src, int length);
+void send(int type, uint8_t dest[MAC_SIZE] , char * message);
+uint8_t * getMac(char user[USERNAME_MAXLENGTH]);
+void showOnlineUsers();
+void maccpy(uint8_t mdest[MAC_SIZE],uint8_t msrc[MAC_SIZE]);
+void offlineUser(char user[USERNAME_MAXLENGTH]);
+int command(char * str);
+int isPrivate(char *str);
+void deleteLine(int amount);
+void welcome();
+void save(char * user, uint8_t mac[MAC_SIZE]);
+int cmpMac(uint8_t mac1[MAC_SIZE],uint8_t mac2[MAC_SIZE]);
+char * getName(uint8_t mac[MAC_SIZE]);
+void recieve(ethMsg msg);
+void myChat();
 
 
 
@@ -22,12 +44,6 @@ static uint8_t macList[MAC_SIZE][MAX_USERS];
 static int usersCount=0;
 static char generic[]="Your friend";
 
-typedef struct {
-	uint8_t mac[MAC_SIZE];
-	char msg[MSG_MAXLENGTH];
-	uint16_t length;
-	uint8_t type;
-} ethMsg;
 
 void mymemcpy( void * dest, void * src, int length){
 	char * d = dest;
@@ -36,6 +52,37 @@ void mymemcpy( void * dest, void * src, int length){
 	for(int i = 0; i < length; i++){
 		d[i] = s[i];
 	}
+}
+
+void send(int type, uint8_t * dest/*[MAC_SIZE]*/ , char * message){
+
+printf("MAC A MANDAR\n");
+	for(int j=0; j<MAC_SIZE;j++){
+			printf("%d\n",dest[j]&0xFF );
+		}
+	
+	ethMsg msg={{0},{0},0};
+	maccpy(msg.mac,dest);
+	strcpy(msg.msg,message);
+	msg.length=strlen(message);
+	msg.type=type;
+	msg.msg[msg.length]=0;
+	printf("MAC COPIADA\n");
+	for(int j=0; j<MAC_SIZE;j++){
+			printf("%d\n",msg.mac[j]&0xFF );
+	}
+	write(2,&msg,msg.length);
+}
+
+
+uint8_t * getMac(char user[USERNAME_MAXLENGTH]){
+	int i;
+	for(i=0;i<usersCount;i++){
+		if(!strcmp(userList[i],user)){
+			return macList[i];
+		}
+	}
+		return 0;
 }
 
 void showOnlineUsers(){
@@ -70,6 +117,7 @@ void offlineUser(char user[USERNAME_MAXLENGTH]){
 }
 
 int command(char * str){
+	int p = isPrivate(str);
 	if(!strcmp("exit",str)){
 		send(OFFLINE,public,user);
 		printf("\n          Thanks for using out chat room! Bye bye!\n");
@@ -78,26 +126,51 @@ int command(char * str){
 		return 0;
 	}else if(!strcmp("online",str)){
 		showOnlineUsers();
-	}
-	else{
+	}else if(p){
+		char mensaje[MSG_MAXLENGTH] = {'p','r','i','v','a','t','e',' ','-',' ',0};
+		char * result;
+		result = strcat(mensaje,str+p);
+		char name[USERNAME_MAXLENGTH];
+		int i = 0;
+		str++;
+		while(i<p-1){
+			name[i] = *str;
+			str++;
+			i++;
+		}
+		name[i] = 0;
+		printf("MAC ANest de MANDAR\n");
+		uint8_t mac [MAC_SIZE]=getMac(name);
+		for(int j=0; j<MAC_SIZE;j++){
+			printf("%d\n",mac[j]&0xFF );
+		}
+		//printf("\n%s\n", result);
+		send(MESSAGE,getMac(name),result);
+	}else{
 		send(MESSAGE,public,str);
 	}
 	return 0;
 }
 
 int isPrivate(char *str){
-	if(str[0]!='@'){
+	int j =0;
+	if(str[j]!='@'){
 		return 0;
 	}
-	str++;
+	j++;
 	char user[USERNAME_MAXLENGTH];
 	int i = 0;
-	while(*str !=' ' && *str){
-		user[i] = *str;
-		str++;
+	while(str[j] !=' ' && str[j]){
+		user[i] = str[j];
+		j++;
 		i++;
 	}
 	user[i] = 0;
+
+	if(!getMac(user)){
+		return 0;
+	}
+	return j+1;
 }
 
 
@@ -108,6 +181,7 @@ void deleteLine(int amount){
 		amount--;
 	}
 }
+
 
 void welcome(){
 	printf("        ***********************************************\n");
@@ -142,19 +216,7 @@ void welcome(){
 	putchar('\n');
 	
 }
-void send(int type, uint8_t dest[MAC_SIZE] , char * message){
 
-	ethMsg msg={{0},{0},0};
-	//mymemcpy(msg.mac,dest,MAC_SIZE);
-	maccpy(msg.mac,dest);
-	//mymemcpy(msg.msg,message,strlen(message));// hay que USAR stringCOPY
-	//msg.msg[msg.length] = 0;
-	strcpy(msg.msg,message);
-	msg.length=strlen(message);
-	msg.type=type;
-	msg.msg[msg.length]=0;
-	write(2,&msg,msg.length);
-}
 
 void save(char * user, uint8_t mac[MAC_SIZE]){
 	strcpy(userList[usersCount],user);
@@ -172,22 +234,6 @@ int cmpMac(uint8_t mac1[MAC_SIZE],uint8_t mac2[MAC_SIZE]){
 	return 1;
 }
 
-uint8_t * getMac(char user[USERNAME_MAXLENGTH]){
-	int i;
-	int j;
-	int flag = 1;
-	for(i=0;i<usersCount && flag;i++){
-		if(strcmp(userList[i],user)){
-			j = i;
-			flag = 0;
-		}
-	}
-	if(flag){
-		return 0;
-	}
-	return macList[j];
-}
-
 char * getName(uint8_t mac[MAC_SIZE]){
 	int i;
 	for(i=0; i<usersCount ;i++){
@@ -200,6 +246,7 @@ char * getName(uint8_t mac[MAC_SIZE]){
 
 void recieve(ethMsg msg){
 	msg.msg[msg.length]=0;//convierto el mensja a string
+
 	if(msg.type==ONLINE){
 		printf("           %s is now online!\n",msg.msg );
 		save(msg.msg,msg.mac);//gauradar MAC y nombre de usario
@@ -224,6 +271,8 @@ void myChat(){
 
 	welcome();
 	send(ONLINE,public,user);
+
+	
 	
 	while(!exit){
 		if(!i && !deleteFlag){

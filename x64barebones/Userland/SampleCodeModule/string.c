@@ -68,7 +68,8 @@ void strcpy(char *dest, char *src){
 		dest++;
 		src++;
 	}
-	*dest = 0;
+	*dest =0;
+	return;
 }
 
 
@@ -79,7 +80,9 @@ void strncpy(char *dest, char *src, int n){
 		src++;
 		n--;
 	}
-	*dest = 0;
+	*dest =0;
+	return;
+
 }
 
 int strcmp(const char* str1, const char* str2){
