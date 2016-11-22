@@ -35,6 +35,7 @@ void processComand(char * buffer){
 	else if(!strcmp(buffer,"hola")){
 		puts("  Hola! Mi nombre es NetSky");
 	}else if(!strcmp(buffer,"2048game")){
+		clearScreen();
 		game2048();
 	}
 	else if(!strcmp("clear",buffer)){
@@ -42,32 +43,7 @@ void processComand(char * buffer){
 	}else if(startsWith("chat",buffer)){
 		clearScreen();
 		myChat();
-		//ethMsg msg1={{0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},0,0};
-		//mymemcpy(msg1.msg,buffer+5,strlen(buffer+5));
-		//msg1.length=strlen(buffer+5);
-		//write(2,&msg1,100);
-
-
-	}/*else if(!strcmp("read",buffer)){
-		ethMsg msg1;
-		if(!read(2,&msg1,100)){
-			puts("No messages!");
-			return;
-		}
-
-		puts("Mac source: ");
-		for(int i=0; i<6; i++){
-			putNum(msg1.mac[i]);
-		}
-		puts("length: ");
-		putNum(msg1.length);
-		puts("Message: ");
-		for(int i=0; i<msg1.length; i++){
-			putchar(msg1.msg[i]);
-		}
-		puts("");
-		puts("---------End of message----");
-	}*/
+	}
 	else{
 		puts("  Command not found - help for instructions");
 	}

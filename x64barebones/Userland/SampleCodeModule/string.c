@@ -25,7 +25,7 @@ char* strrev(char* str){
 }
 
 // concatena un string a los primeros n caracteres de otra
-char* strncat(char* str1, char* str2, int n){
+char * strncat(char* str1, char* str2, int n){
 	int length = strlen(str1);
 	int i = 0;
 	while(str2[i] && i < n){
@@ -50,7 +50,7 @@ int strpbrk(char* str1, char s){
 }
 
 // concatena un string a otro
-char* strcat(char* str1, char* str2){
+char * strcat(char* str1, char* str2){
 	int length = strlen(str1);
 	while(*str2){
 		str1[length] = *str2;

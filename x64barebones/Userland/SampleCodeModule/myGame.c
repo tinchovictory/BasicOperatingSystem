@@ -28,7 +28,7 @@ void ImprimirTablero(sTablero tablero);
 void ImprimirError(int error);
 int getint();
 
-void game2048(){
+int game2048(){
 	int menuOption, resp,accion,jugada,hiceUndo=1,estado,error=NO;
 	sTablero tablero1, tablero2, tableroAux;
 	sCasVacios casVacios;
@@ -188,7 +188,7 @@ int dificultad(){
 	printf("1-Facil\n");
 	printf("2-Intermedio\n");
 	printf("3-Dificil\n");
-	printf("ELIJA UNA OPCION");
+	printf("ELIJA UNA OPCION\n");
 	resp=getint();
 	while (resp >3 || resp<1){
 		printf("\nDato incorrecto\n");
@@ -234,6 +234,7 @@ void getAccion(char comando[], char fileName[]){
 	char c;
 	int i=0,j=0,var=1;
 	while((c=getchar())!='\n'){
+		putchar(c);
 		if (var==2 && j<MAX_LENGTH_FILE_NAME){
 			fileName[j++]=c;
 		}

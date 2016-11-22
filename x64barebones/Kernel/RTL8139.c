@@ -41,7 +41,7 @@ typedef struct {
 	uint32_t frameCheck;
 } ethFrame;
 
-static ethFrame messages[MESSAGE_BUFFER_SIZE]={{0}};
+static ethFrame messages[MESSAGE_BUFFER_SIZE] = {{{0}}};
 static int nexToWrite=0;
 static int nextToRead=0;
 
