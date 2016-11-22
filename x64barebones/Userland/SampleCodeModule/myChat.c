@@ -85,6 +85,10 @@ void printMac(uint8_t  * mac){
 }
 
 void showOnlineUsers(){
+	if(!usersCount){
+		printf("\n\n          There are no users online\n");
+		return;
+	}
 	printf("\nThis are the users online: \n");
 
 	for (int i = 0; i < usersCount; ++i){
