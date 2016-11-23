@@ -88,6 +88,21 @@ void * initializeKernelBinary()
 }
 
 
+int main()
+{	
+
+	initializeInterruptions();
+	activeRTLdma();
+	initRTL();
+	
+	ncClear();
+	((EntryPoint)sampleCodeModuleAddress)();
+	return 0;
+}
+
+
+/* - DEBUGGING - */
+
 void printEthMsg(ethMsg msg1){
 	ncNewline();ncPrint("Mac destination: ");
 		for(int i=0; i<MAC_SIZE; i++){
@@ -101,55 +116,4 @@ void printEthMsg(ethMsg msg1){
 		}
 		ncNewline();
 		ncPrint("---------End of message----");ncNewline();ncNewline();
-}
-int main()
-{	
-	ncClear();
-	initializeInterruptions();
-	
-	//searchRTL();
-	activeRTLdma();
-	//activeDMA();
-	initRTL();
-	ncPrint("RTL initalized");ncNewline();
-	
-
-	/*int i;
-	ethMsg msg1={{0xFF,0xFF,0xFF,0xFF,0xFF,0xFF},{'h','o','l','a',0},5};//DE:00:40:AA:21:2E
-	ethMsg gMsg ;
-
-	for(i=0;i<800000000;i++);
-	//sendMsg(msg1);
-	systemCall(2, 2, &msg1, 100);
-//for(i=0;i<800000000;i++);
-systemCall(2, 2, &msg1, 100);
-for(i=0;i<800000000;i++);
-	if(systemCall(1,2,&gMsg,100)){
-		printEthMsg(gMsg);
-	}else{
-		ncPrint("No Msg");
-	}
-	if(systemCall(1,2,&gMsg,100)){
-		printEthMsg(gMsg);
-	}else{
-		ncPrint("No Msg");
-	}
-	if(systemCall(1,2,&gMsg,100)){
-		printEthMsg(gMsg);
-	}else{
-		ncPrint("No Msg");
-	}
-	//printEthMsg(gMsg);
-	//getMsg(&gMsg);
-	//printEthMsg(gMsg);
-	//for(i=0;i<800000000;i++);
-	//sendMsg("ANDA?",6);
-//sendMsg("ANDA?",6);
-	//ncNewline();
-	//ncPrint("Finished");
-*/
-	
-	ncClear();
-	((EntryPoint)sampleCodeModuleAddress)();
-	return 0;
 }
