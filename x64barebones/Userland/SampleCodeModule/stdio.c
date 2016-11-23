@@ -3,9 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
-
-
 void putNum(int num){
 	char buffer[100]={0};
 	int i;
@@ -58,7 +55,7 @@ int getchar(){
 
 int ungetc(int c){
 	buffer[i++] = c;
-	return 0;//QUE DEVUELVE?
+	return 0;
 }
 
 int putchar(char c){
@@ -67,7 +64,6 @@ int putchar(char c){
 
 
 int printSpace(char * format, int k, va_list parameters, int incr ){
-	
 	return i;
 }
 
@@ -171,13 +167,11 @@ void scanf(const char *format, ...){
 				while((buffer[j++]) == ' '){
 				}
 				j--;
-				//ungetc(*buffer);
 				while((buffer[j++]) != '\n' && *buffer != ' ' && isDigit(*buffer)){
 					*number_ptr = (*number_ptr)*10 + *buffer -'0';
 				}
 				if(!isDigit(*buffer)){
 					j--;
-					//ungetc(*buffer);
 				}else if(*buffer == '\n'){
 					break;
 				}
@@ -187,7 +181,6 @@ void scanf(const char *format, ...){
 				while((buffer[j++]) == ' '){
 				}
 				j--;
-				//ungetc(*buffer);
 				while((buffer[j++]) != '\n' && *buffer != ' '){
 					*string_ptr = *buffer;
 					string_ptr++;
@@ -197,7 +190,6 @@ void scanf(const char *format, ...){
 					break;
 				}else if(*buffer == ' '){
 					j--;
-				//	ungetc(*buffer);
 				}
 			}else if(format[i] == 'c'){
 				char * char_ptr;

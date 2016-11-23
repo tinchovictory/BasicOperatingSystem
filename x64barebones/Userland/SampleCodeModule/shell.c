@@ -3,24 +3,8 @@
 #include <stdlib.h>
 #include "myGame.h"
 #include <myChat.h>
-//#include <systemCalls.h>
+#include <systemCalls.h>
 
-void clearScreen();
-/*
-typedef struct {
-	uint8_t mac[6];
-	uint8_t msg[1000];
-	uint16_t length;
-} ethMsg;
-void mymemcpy( void * dest, void * src, int length){
-	char * d = dest;
-	char * s = src;
-
-	for(int i = 0; i < length; i++){
-		d[i] = s[i];
-	}
-}
-*/
 void processComand(char * buffer){
 	if (!strcmp(buffer,"help")){
 		printf("  echo : print on screen\n");
