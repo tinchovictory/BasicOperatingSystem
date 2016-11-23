@@ -51,7 +51,6 @@ uint64_t write(uint64_t fileDescriptor, void * buf, uint64_t nBytes){
 		}
 		return i;
 	}else if(fileDescriptor == ETHERNET_FD){
-		//ethMsg * myBuf = (ethMsg *) buf;
 		sendMsg(*((ethMsg *) buf));
 		return nBytes;
 	}
