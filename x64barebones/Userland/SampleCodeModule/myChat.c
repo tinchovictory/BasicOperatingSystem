@@ -144,6 +144,8 @@ int command(char * str){
 		name[i] = 0;
 		strcat(mensaje,str+i);
 		send(MESSAGE,getMac(name),mensaje);
+	}else if(isPrivate(str) == 2){
+		//no mando el mensaje
 	}else{
 		send(MESSAGE,public,str);
 	}
@@ -165,7 +167,7 @@ int isPrivate(char *str){
 	name[i] = 0;
 	if(getMac(name)==0){
 		printf("\n\n        I'm sorry %s is not online\n", name);
-		return 0;
+		return 2;
 	}
 	return 1;
 }
@@ -179,7 +181,7 @@ void deleteLine(int amount){
 	}
 }
 void help(){
-	printf("This are the available commands:\n");
+	printf("\n\nThis are the available commands:\n");
 	printf("     help: show comands\n");
 	printf("     exit: exit chat room\n");
 	printf("     online: show users online\n");
@@ -198,7 +200,6 @@ void welcome(){
 
 	char c;
 	int j = 0;
-	int flag = 1;
 	printf("%s", "What's your name?: ");
 	while((c=getchar())!='\n' && j<USERNAME_MAXLENGTH){
 		if(c == '\b'){
