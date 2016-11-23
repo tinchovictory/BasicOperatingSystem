@@ -36,6 +36,7 @@ void recieve(ethMsg msg);
 void myChat();
 void printMac(uint8_t  * mac);
 void help();
+void validName(char * name);
 
 
 
@@ -89,7 +90,7 @@ void showOnlineUsers(){
 		printf("\n\n          There are no users online\n");
 		return;
 	}
-	printf("\nThis are the users online: \n");
+	printf("\n\nThis are the users online: \n");
 
 	for (int i = 0; i < usersCount; ++i){
 		printf("             %s\n",userList[i] );
@@ -163,7 +164,7 @@ int isPrivate(char *str){
 	}
 	name[i] = 0;
 	if(getMac(name)==0){
-		printf("\nI'm sorry %s is not online\n", name);
+		printf("\n\n        I'm sorry %s is not online\n", name);
 		return 0;
 	}
 	return 1;
@@ -199,40 +200,38 @@ void welcome(){
 	int j = 0;
 	int flag = 1;
 	printf("%s", "What's your name?: ");
-	while(flag){
-		while((c=getchar())!='\n' && j<USERNAME_MAXLENGTH){
-			if(c == '\b'){
-				if(j!=0 ){			
-					putchar(c);
-					j--;
-				}
-			}else{
-			putchar(c);
-			user[j++] = c;
+	while((c=getchar())!='\n' && j<USERNAME_MAXLENGTH){
+		if(c == '\b'){
+			if(j!=0 ){			
+				putchar(c);
+				j--;
 			}
-		}
-		user[j] = 0;
-		if(validName(user)){
-			flag = 0;
 		}else{
-			printf("\nI'm sorry, your username cannot have spaces.\nPlease insert a new username: ");
-			j=0;
+		putchar(c);
+		user[j++] = c;
 		}
 	}
+	user[j] = 0;
+	validName(user);
 	putchar('\n');
 	putchar('\n');
 	putchar('\n');
 	
 }
 
-int validName(char * name){
-	while(*name){
-		if(*name == ' '){
-			return 0;
+
+void validName(char * name){
+	int i = 0;
+	int j = 0;
+	while(name[i]){
+		while(name[i] == ' '){
+			i++;
 		}
-		name++;
+		name[j] = name[i];
+		i++;
+		j++;
 	}
-	return 1;
+	name[j] = 0;
 }
 
 
