@@ -42,29 +42,6 @@ void print(const char * string){
 		checkEndOfScreen();
 	}
 }
-/*
-void printCharacters(const char * character, int length){
-	while(length != 0){
-		//analizo caracteres especiales
-		if(*character == '\n'){
-			character++;
-			newLine();
-		}else if(*character == '\b'){
-			character++;
-			backSpace();
-		}else if(*character == '\t'){
-			character++;
-			printTab();
-		}else{
-			*(currentPosition++) = *(character++);
-			*(currentPosition++) = DEFAULT_COLOR;
-		}
-		checkEndOfScreen();
-		length--;
-	}
-}
-*/
-
 
 void newLine(){
 	currentPosition +=  (screen - currentPosition) % (WINDOW_WIDTH*2) + WINDOW_WIDTH*2;
@@ -86,13 +63,10 @@ void printTab(){
 void printCharacters(const char character){
 	//analizo caracteres especiales
 	if(character == '\n'){
-		//character++;
 		newLine();
 	}else if(character == '\b'){
-		//character++;
 		backSpace();
 	}else if(character == '\t'){
-		//character++;
 		printTab();
 	}else{
 		*(currentPosition++) = character;
@@ -100,57 +74,4 @@ void printCharacters(const char character){
 	}
 	checkEndOfScreen();
 }
-
-/*
-void clearScreenWithColor(int color){
-	for(int i = 0; i < WINDOW_WIDTH*2 * WINDOW_HEIGHT; i++){
-		if(i%2 == 1){
-			screen[i] = color;
-		}else{
-			screen[i] = ' ';
-		}
-	}
-	currentPosition = screen;
-}
-
-void clearScreen(){
-	clearScreenWithColor(0x0F);
-}
-
-void printStringWithColor(const char * string, int color){
-	while(*string){
-		*(currentPosition++) = *(string++);//pongo el caracter
-		if(color != -1){
-			*(currentPosition++) = color;//pongo el color
-		}else{
-			currentPosition++;
-		}
-	}
-}
-
-void printString(char * string){
-	printStringWithColor(string, -1);
-}
-
-
-
-void printPositionedString(char * string, int row, int column){
-	char * cPos = currentPosition;
-
-	currentPosition = screen + row * WINDOW_WIDTH * 2 + column * 2;
-	printString(string);
-
-	currentPosition = cPos;
-}
-
-
-void colorRow(int row, int color){
-	char * pos = screen + row * 80 * 2;
-	for(int i = 1; i < 80 * 2; i+=2){
-		pos[i] = color;
-	}
-}
-*/
-
-
 

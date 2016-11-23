@@ -35,7 +35,7 @@ typedef struct {
 static IDTEntry_t* IDT = (IDTEntry_t*) 0x0; // pongo la idt en la posicion 0 de memeoria
 
 void tickHandler() {
-	//video[i++] = i;	
+
 }
 
 typedef void (*handler_t)(void);
@@ -64,10 +64,10 @@ void initializeInterruptions(){
 	iSetHandler(0x21, (uint64_t) irq1Handler);
 	iSetHandler(0x2B, (uint64_t) irq11Handler);
 
-	iSetHandler(0x80, (uint64_t) sysCallHandler);//software interruptions, systemcall
+	iSetHandler(0x80, (uint64_t) sysCallHandler); //software interruptions, systemcall
 
-	setPicMaster(0xF8); // activo las irq0 y irq1 en el pic
-	setPicSlave(0x0);
+	setPicMaster(0xF8); // activo las irq0(timer tick), irq1(teclado) y la irq2(slave pic) en el pic master
+	setPicSlave(0xF7); // activo la irq11(RTL8139) que esta en slave pic
 	
 	sti();
 }

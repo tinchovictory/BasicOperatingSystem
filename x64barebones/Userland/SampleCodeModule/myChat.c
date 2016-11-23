@@ -277,6 +277,8 @@ void recieve(ethMsg msg){
 	}
 }
 
+
+
 void myChat(){
 	char buffer[200];
 	int i=0;

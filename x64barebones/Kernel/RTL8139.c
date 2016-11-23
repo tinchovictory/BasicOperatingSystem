@@ -4,30 +4,39 @@
 
 #include <naiveConsole.h>
 
-#define IO_ADDRESS 0xC000 //Get from pci search
+#define IO_ADDRESS 0xC000 // Get from pci search
 
-#define CONFIG_1 0x52	//Configuration Register 1 Address
-#define ISR 0x3E 	//Interrupt Status Register Start Address
-#define CR 0x37		//Command Register Address
+#define CONFIG_1 0x52	// Configuration Register 1 Address
+#define ISR 0x3E 	// Interrupt Status Register Start Address
+#define CR 0x37		// Command Register Address
+#define IMR 0x3C 	// Interrupt Mask Register 
+#define RCR 0x44 	// Receive (Rx) Configuration Register 
 
-#define RBSTART 0x30 	//Receive Buffer Start Address 
-#define TSAD0 0x20		//Transmit Start Address of Descriptor0
-#define TSAD1 0x24		//Transmit Start Address of Descriptor1
-#define TSAD2 0x28		//Transmit Start Address of Descriptor2
-#define TSAD3 0x2C		//Transmit Start Address of Descriptor3
+#define RBSTART 0x30 	// Receive Buffer Start Address 
+#define TSAD0 0x20		// Transmit Start Address of Descriptor0
+#define TSAD1 0x24		// Transmit Start Address of Descriptor1
+#define TSAD2 0x28		// Transmit Start Address of Descriptor2
+#define TSAD3 0x2C		// Transmit Start Address of Descriptor3
 
-#define CHECK_TOK 0x4		//packet transmision completed succesfully
-#define CHECK_ROK 0x1		//succesfull completition of packet reception
+#define TSD0 0x10 		// Transmit Status of Descriptor 0
+#define TSD1 0x14 		// Transmit Status of Descriptor 1
+#define TSD2 0x18 		// Transmit Status of Descriptor 2
+#define TSD3 0x1C 		// Transmit Status of Descriptor 3
 
-#define CLEAR_TOK 0xFB
-#define CLEAR_ROK 0xFE
+#define CHECK_TOK 0x4		// Packet transmision completed succesfully
+#define CHECK_ROK 0x1		// Succesfull completition of packet reception
 
-#define TR_BUFFER_SIZE 10000 //CAMBIAR
-#define RE_BUFFER_SIZE 10000
+#define CLEAR_TOK 0xFB 		// Clearing the Transmit OK bit
+#define CLEAR_ROK 0xFE		// Clearing the Recive OK bit
+#define CLEAR_OWN 0xFFF		// Clearing the OWN bit
 
-#define MESSAGE_BUFFER_SIZE 100
+#define TR_BUFFER_SIZE 8*(1024) 			// Osdev suggested size for the transmit buffer
+#define RE_BUFFER_SIZE 8*(1024)+16+1500 	// Osdev suggested size for the recive buffer	
 
-#define BROADCAST 0xFF
+#define MESSAGE_BUFFER_SIZE 100		// Internal circular buffer size
+#define PAYLOAD_SIZE 1000
+
+#define BROADCAST 0xFF 		// Broadcast MAC value
 
 static char trBuffer[3][TR_BUFFER_SIZE] = {{0}};
 static char reBuffer[RE_BUFFER_SIZE] = {0};
@@ -37,7 +46,7 @@ typedef struct {
 	uint8_t macDest[MAC_SIZE];
 	uint8_t macSrc[MAC_SIZE];
 	uint16_t length;
-	uint8_t payload[1000];//CAMBIAR
+	uint8_t payload[PAYLOAD_SIZE];//CAMBIAR
 	uint32_t frameCheck;
 } ethFrame;
 
@@ -73,9 +82,8 @@ void transmit(ethFrame * frame){
 	trBuffer[0][length] = frame->frameCheck;
 	length += 2;
 
-	sysOutLong( IO_ADDRESS + 0x10, length & 0xFFF);//clear own bit
+	sysOutLong( IO_ADDRESS + TSD0, length & CLEAR_OWN);//clear own bit
 
-	//esperar hasta que termine de mandar el msg
 }
 
 void getMacAdress(uint8_t macDest[MAC_SIZE]){
@@ -121,28 +129,6 @@ int getMsg(ethMsg * msg){
 
 	return msg->length + MAC_SIZE + sizeof(msg->length);
 
-}
-
-
-void printFrame(ethFrame * frame){
-	ncNewline();ncPrint("Mac destination: ");
-		for(int i=0; i<MAC_SIZE; i++){
-			ncPrintHex(frame->macDest[i]);
-		}
-		ncNewline();ncPrint("Mac Source: ");
-		for(int i=0; i<MAC_SIZE; i++){
-			ncPrintHex(frame->macSrc[i]);
-		}
-		ncNewline();ncPrint("length: ");
-		ncPrintDec(frame->length);ncNewline();
-		ncPrint("Message: ");
-		for(int i=0; i<frame->length; i++){
-			ncPrintChar(frame->payload[i]);
-		}
-		ncNewline();
-		ncNewline();ncPrint("frameCheck: ");
-		ncPrintDec(frame->frameCheck);ncNewline();
-		ncPrint("---------End of message----");ncNewline();ncNewline();
 }
 
 int isForMe( ethFrame * frame ){
@@ -217,7 +203,7 @@ void initRTL(){
 
 	/* Set the RTL8139 to accept only the Transmit OK (TOK) and Receive OK (ROK) interrupts
 	** we would have the TOK and ROK bits of the IMR high and leave the rest low. */
-	sysOutWord(IO_ADDRESS + 0x3C, 0x0005);
+	sysOutWord(IO_ADDRESS + IMR, 0x0005);
 
 	/* Telling the RTL8139 to accept AB+AM+APM+AAP packets (0xf).
 	** Setting WRAP bit, so the packet will be written contiguously in memory. */
@@ -227,4 +213,29 @@ void initRTL(){
 	** Once this is completed, then the card will start allowing packets in and/or out. */
 	sysOutByte( IO_ADDRESS + CR, 0x0C);
 
+}
+
+
+
+/* DEBUGGING */
+
+void printFrame(ethFrame * frame){
+	ncNewline();ncPrint("Mac destination: ");
+		for(int i=0; i<MAC_SIZE; i++){
+			ncPrintHex(frame->macDest[i]);
+		}
+		ncNewline();ncPrint("Mac Source: ");
+		for(int i=0; i<MAC_SIZE; i++){
+			ncPrintHex(frame->macSrc[i]);
+		}
+		ncNewline();ncPrint("length: ");
+		ncPrintDec(frame->length);ncNewline();
+		ncPrint("Message: ");
+		for(int i=0; i<frame->length; i++){
+			ncPrintChar(frame->payload[i]);
+		}
+		ncNewline();
+		ncNewline();ncPrint("frameCheck: ");
+		ncPrintDec(frame->frameCheck);ncNewline();
+		ncPrint("---------End of message----");ncNewline();ncNewline();
 }
